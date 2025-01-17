@@ -1,0 +1,98 @@
+package com.example.myapplication.composables
+
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
+    wallpaper = Wallpapers.GREEN_DOMINATED_EXAMPLE,
+    showSystemUi = true,
+    showBackground = true,
+)
+@Composable
+fun BottomNavBar() {
+    var showModal by remember { mutableStateOf(false) }
+    var modalContent by remember { mutableStateOf("") }
+
+    BottomAppBar(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            IconButton(onClick = { /* Handle Backward action */ }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Backward")
+            }
+            IconButton(onClick = { /* Handle Forward action */ }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Forward")
+            }
+            IconButton(onClick = { /* Handle Home action */ }) {
+                Icon(Icons.Default.Home, contentDescription = "Home")
+            }
+            IconButton(onClick = {
+                modalContent = "Tabs"
+                showModal = true
+            }) {
+                Icon(Icons.Default.MailOutline, contentDescription = "Tabs")
+            }
+            IconButton(onClick = {
+                modalContent = "Menu"
+                showModal = true
+            }) {
+                Icon(Icons.Default.Menu, contentDescription = "Menu")
+            }
+        }
+    }
+
+    if (showModal) {
+        ModalBottomSheet(
+            onDismissRequest = { showModal = false }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Bottom Modal: $modalContent", fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = { showModal = false }) {
+                    Text("Close")
+                }
+            }
+        }
+    }
+}
+
