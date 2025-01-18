@@ -1,4 +1,4 @@
-package com.example.myapplication.composables
+package com.example.myapplication.composables.titleWidget
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -19,13 +19,17 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ShieldCheck
+import com.example.myapplication.composables.viewModel.LocalTitleBar
 
 @Composable
-fun TitleBar(searchTitle: String, onClick: () -> Unit = {}) {
+fun TitleBar(searchTitle: String) {
+    val titleBarViewModel = LocalTitleBar.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable {
+
+            }
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -39,7 +43,14 @@ fun TitleBar(searchTitle: String, onClick: () -> Unit = {}) {
                 modifier = Modifier.height(20.dp)
             )
         }
-        Text(text = searchTitle, modifier = Modifier.weight(1f))
+        Text(
+            text = searchTitle,
+            modifier = Modifier
+                .weight(1f)
+                .clickable {
+                    titleBarViewModel.isTitleBar = false
+                }
+        )
         IconButton(
             onClick = { },
         ) {
