@@ -29,12 +29,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.myapplication.composables.viewModel.LocalTitleBar
+import com.example.myapplication.composables.viewModel.TitleBarViewModel
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun TopBottomDrawer() {
+
     var showTop by remember { mutableStateOf(false) }
     var showBottom by remember { mutableStateOf(false) }
+    val titleBarViewModel = LocalTitleBar.current
 
     Box(
         modifier = Modifier
@@ -69,6 +73,7 @@ fun TopBottomDrawer() {
                                 showTop = false
                                 showBottom = false
                             }
+                            titleBarViewModel.isTitleBar = true
                         }
                     )
                 }

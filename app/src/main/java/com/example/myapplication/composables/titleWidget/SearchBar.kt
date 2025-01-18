@@ -36,6 +36,7 @@ import com.example.myapplication.composables.viewModel.LocalTitleBar
 @Composable
 fun SearchBar() {
     val titleBarViewModel = LocalTitleBar.current
+    val searchText = titleBarViewModel.searchText.collectAsState()
     if (titleBarViewModel.isTitleBar) {
         TitleBar(searchTitle = "AEW Google Search")
     } else {
@@ -48,8 +49,8 @@ fun SearchBar() {
             SearchEngineDropDown()
             Spacer(modifier = Modifier.width(4.dp))
             BasicTextField(
-                value = titleBarViewModel.searchText,
-                onValueChange = { titleBarViewModel.searchText = it },
+                value = searchText.value,
+                onValueChange = { titleBarViewModel.searchText.value = it },
                 modifier = Modifier
                     .weight(1f)
                     .background(Color.Transparent)
@@ -65,7 +66,7 @@ fun SearchBar() {
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 singleLine = true,
                 decorationBox = { innerTextField ->
-                    if (titleBarViewModel.searchText.isEmpty()) {
+                    if (searchText.value.isEmpty()) {
                         Text(
                             text = "  Search or type URL",
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -77,9 +78,9 @@ fun SearchBar() {
                 }
             )
             Spacer(modifier = Modifier.width(4.dp))
-            if (titleBarViewModel.searchText.isNotEmpty()) {
+            if (searchText.value.isNotEmpty()) {
                 IconButton(
-                    onClick = { titleBarViewModel.searchText = "" },
+                    onClick = { titleBarViewModel.searchText.value = "" },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
@@ -88,7 +89,7 @@ fun SearchBar() {
                     )
                 }
             }
-            if (titleBarViewModel.isFocused || titleBarViewModel.searchText.isNotEmpty()) {
+            if (titleBarViewModel.isFocused || searchText.value.isNotEmpty()) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
