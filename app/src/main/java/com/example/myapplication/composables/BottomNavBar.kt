@@ -1,6 +1,7 @@
 package com.example.myapplication.composables
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,11 +63,12 @@ fun BottomNavBar() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp) // Reduced padding for a smaller height
+                    .padding(8.dp)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
             ) {
                 Text(
                     text = "Bottom Modal: $modalContent",
-                    fontSize = 16.sp, // Slightly smaller text size
+                    fontSize = 16.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Button(
@@ -82,7 +84,8 @@ fun BottomNavBar() {
     BottomAppBar(
         modifier = Modifier
             .fillMaxWidth()
-            .height(45.dp), containerColor = Color.Transparent
+            .height(45.dp),
+        containerColor = Color.Transparent
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
