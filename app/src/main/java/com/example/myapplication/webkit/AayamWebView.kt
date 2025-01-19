@@ -10,7 +10,10 @@ import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
 
-class AayamWebView(context: Context) : WebView(context) {
+class AayamWebView(
+    context: Context,
+    onTitleReceive: (a: String) -> Unit
+) : WebView(context) {
 
     init {
 
@@ -54,6 +57,6 @@ class AayamWebView(context: Context) : WebView(context) {
         }
 
         webViewClient = AayamWebClient(context)
-        webChromeClient = AayamWebChrome(context)
+        webChromeClient = AayamWebChrome(context, onTitleReceive)
     }
 }

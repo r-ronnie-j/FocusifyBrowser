@@ -5,9 +5,13 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.webkit.WebChromeClient
+import android.webkit.WebView
 import android.widget.FrameLayout
 
-class AayamWebChrome(private val context: Context) : WebChromeClient() {
+class AayamWebChrome(
+    private val context: Context,
+    private val onTitleReceive: (a: String) -> Unit
+) : WebChromeClient() {
     private var view: View? = null
     override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
         (context as Activity).runOnUiThread {
@@ -21,6 +25,13 @@ class AayamWebChrome(private val context: Context) : WebChromeClient() {
             )
             context.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+    }
+
+    override fun onReceivedTitle(view: WebView?, title: String?) {
+        super.onReceivedTitle(view, title)
+        title?.let {
+            onTitleReceive(it)
         }
     }
 

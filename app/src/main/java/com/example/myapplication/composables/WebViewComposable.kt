@@ -16,9 +16,7 @@ fun WebViewComposable() {
     AndroidView(
         factory = { context ->
             if (webTabViewModel.activeIndex == webTabViewModel.webViewTabs.size) {
-                val webView = AayamWebView(context)
-                webTabViewModel.addWebView(webView)
-                webView
+                webTabViewModel.createWebView(context)
             } else {
                 webTabViewModel.webViewTabs[webTabViewModel.activeIndex]
             }

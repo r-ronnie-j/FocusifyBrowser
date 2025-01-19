@@ -1,5 +1,6 @@
 package com.example.myapplication.webkit
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -8,6 +9,7 @@ import android.webkit.WebViewClient
 
 class AayamWebClient(private val context: Context) : WebViewClient() {
 
+    @SuppressLint("QueryPermissionsNeeded")
     @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         if (url != null && url.startsWith("intent://")) {
