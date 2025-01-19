@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -89,27 +87,7 @@ fun TopBottomDrawer() {
                     )
                 }
         ) {
-            Column {
-                ElevatedButton(onClick = {
-                    showTop = false
-                    showBottom = !showBottom
-                }) {
-                    Text("Toggle Bottom Drawer")
-                }
-                ElevatedButton(onClick = {
-                    showTop = !showTop
-                    showBottom = false
-                }) {
-                    Text("Toggle Top Drawer")
-                }
-            }
-            if (showTop || showBottom) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.75f))
-                ) { }
-            }
+            WebViewComposable()
         }
         Box(
             modifier = Modifier

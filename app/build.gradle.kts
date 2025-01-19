@@ -69,4 +69,5 @@ dependencies {
     implementation(libs.octicons)
     implementation(libs.icons.lucide)
     implementation(libs.okhttp)
+    runtimeOnly(libs.androidx.webkit)
 }

@@ -26,7 +26,7 @@ suspend fun extractSearchSuggestion(searchString: String): List<String> {
     }
 }
 
-fun parseJsonAndExtractTitles(jsonString: String): List<String> {
+private fun parseJsonAndExtractTitles(jsonString: String): List<String> {
     val titles = mutableListOf<String>()
     val rootArray = JSONArray(jsonString)
     val dataArray = rootArray.getJSONArray(0)
