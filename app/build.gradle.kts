@@ -68,4 +68,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.octicons)
     implementation(libs.icons.lucide)
+    implementation(libs.okhttp)
 }
