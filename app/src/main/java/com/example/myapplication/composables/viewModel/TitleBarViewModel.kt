@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.utilData.SearchSuggestion
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 class TitleBarViewModel : ViewModel() {
-    val searchText = MutableStateFlow("")
+    val searchText = MutableStateFlow(TextFieldValue())
     var isFocused by mutableStateOf(false)
     var isTitleBar by mutableStateOf(true)
     val titleBarRequester = FocusRequester()
@@ -30,14 +31,14 @@ class TitleBarViewModel : ViewModel() {
                 .debounce(500)
                 .distinctUntilChanged()
                 .collect {
-                    if (it.isBlank()) {
+                    if (it.text.isBlank()) {
                         suggestions.value = emptyList()
                     } else {
-                        val searchSuggestion = extractSearchSuggestion(it)
+                        val searchSuggestion = extractSearchSuggestion(it.text)
                         suggestions.value = searchSuggestion.map { suggestion ->
                             SearchSuggestion(
                                 text = suggestion,
-                                type = SuggestionType.Internet
+                                type = SuggestionType.Google
                             )
                         }
                     }

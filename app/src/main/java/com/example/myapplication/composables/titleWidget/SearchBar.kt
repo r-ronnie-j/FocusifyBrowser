@@ -19,6 +19,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
@@ -66,7 +67,7 @@ fun SearchBar() {
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 singleLine = true,
                 decorationBox = { innerTextField ->
-                    if (searchText.value.isEmpty()) {
+                    if (searchText.value.text.isEmpty()) {
                         Text(
                             text = "  Search or type URL",
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -78,9 +79,9 @@ fun SearchBar() {
                 }
             )
             Spacer(modifier = Modifier.width(4.dp))
-            if (searchText.value.isNotEmpty()) {
+            if (searchText.value.text.isNotEmpty()) {
                 IconButton(
-                    onClick = { titleBarViewModel.searchText.value = "" },
+                    onClick = { titleBarViewModel.searchText.value = TextFieldValue(text = "") },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
@@ -89,7 +90,7 @@ fun SearchBar() {
                     )
                 }
             }
-            if (titleBarViewModel.isFocused || searchText.value.isNotEmpty()) {
+            if (titleBarViewModel.isFocused || searchText.value.text.isNotEmpty()) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search Icon",
@@ -97,8 +98,6 @@ fun SearchBar() {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
             }
-
-
         }
     }
 

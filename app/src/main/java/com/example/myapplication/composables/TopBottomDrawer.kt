@@ -32,6 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.myapplication.composables.titleWidget.SuggestionComposable
 import com.example.myapplication.composables.viewModel.LocalTitleBar
 
 @Preview(showSystemUi = true, showBackground = true)
@@ -62,7 +63,7 @@ fun TopBottomDrawer() {
             if (!titleBarViewModel.isTitleBar && suggestions.value.isNotEmpty()) {
                 Column {
                     suggestions.value.forEach {
-                        Text(text = it.text)
+                        SuggestionComposable(suggestion = it)
                     }
                 }
             }
