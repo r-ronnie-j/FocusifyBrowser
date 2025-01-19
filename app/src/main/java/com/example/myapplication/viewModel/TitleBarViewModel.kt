@@ -1,4 +1,4 @@
-package com.example.myapplication.composables.viewModel
+package com.example.myapplication.viewModel
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue

@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ShieldCheck
-import com.example.myapplication.composables.viewModel.LocalTitleBar
+import com.example.myapplication.viewModel.LocalTitleBar
 
 @Composable
 fun TitleBar(searchTitle: String) {

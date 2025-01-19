@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Wallpapers
 import com.example.myapplication.R
-import com.example.myapplication.composables.viewModel.LocalTitleBar
+import com.example.myapplication.viewModel.LocalTitleBar
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,

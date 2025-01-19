@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.example.myapplication.composables.titleWidget.SuggestionComposable
-import com.example.myapplication.composables.viewModel.LocalTitleBar
+import com.example.myapplication.viewModel.LocalTitleBar
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
