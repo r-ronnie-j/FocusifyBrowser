@@ -40,7 +40,7 @@ fun SearchBar() {
     val titleBarViewModel = LocalTitleBar.current
     val searchText = titleBarViewModel.searchText.collectAsState()
     if (titleBarViewModel.isTitleBar) {
-        TitleBar(searchTitle = "AEW Google Search")
+        TitleBar()
     } else {
         Row(
             modifier = Modifier

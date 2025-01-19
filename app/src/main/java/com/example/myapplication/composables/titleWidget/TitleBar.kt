@@ -20,10 +20,12 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.ShieldCheck
 import com.example.myapplication.viewModel.LocalTitleBar
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 
 @Composable
-fun TitleBar(searchTitle: String) {
+fun TitleBar() {
     val titleBarViewModel = LocalTitleBar.current
+    val webviewModel = LocalWebTabViewModel.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,8 +33,7 @@ fun TitleBar(searchTitle: String) {
 
             }
             .padding(horizontal = 8.dp)
-            .height(32.dp)
-        ,
+            .height(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
@@ -46,7 +47,7 @@ fun TitleBar(searchTitle: String) {
             )
         }
         Text(
-            text = searchTitle,
+            text = webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)?.title ?: "Homepage",
             modifier = Modifier
                 .weight(1f)
                 .clickable {
@@ -69,5 +70,5 @@ fun TitleBar(searchTitle: String) {
 @Preview(showBackground = true, showSystemUi = true, wallpaper = Wallpapers.GREEN_DOMINATED_EXAMPLE)
 @Composable
 fun TitleBarPreview() {
-    TitleBar(searchTitle = "aew - Google Search")
+    TitleBar()
 }
