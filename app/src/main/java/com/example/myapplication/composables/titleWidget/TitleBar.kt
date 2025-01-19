@@ -34,7 +34,7 @@ fun TitleBar() {
 
             }
             .padding(horizontal = 8.dp)
-            .height(32.dp),
+            .height(36.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(

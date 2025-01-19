@@ -1,6 +1,8 @@
 package com.example.myapplication.composables
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,22 +28,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Square
+import com.example.myapplication.composables.widgets.BouncingBox
 import compose.icons.Octicons
 import compose.icons.octicons.ChevronLeft24
 import compose.icons.octicons.ChevronRight24
 import compose.icons.octicons.Home24
 import compose.icons.octicons.Share24
+import compose.icons.octicons.Square16
 import compose.icons.octicons.Square24
 import compose.icons.octicons.ThreeBars16
 
@@ -88,7 +98,9 @@ fun BottomNavBar() {
         containerColor = Color.Transparent
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { /* Handle back navigation */ }) {
                 Icon(
@@ -114,16 +126,16 @@ fun BottomNavBar() {
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            IconButton(onClick = {
-                modalContent = "Tabs"
-                showModal = true
-            }) {
+            BouncingBox(
+                onClick = {}
+            ) {
                 Icon(
-                    imageVector = Octicons.Square24,
+                    imageVector = Lucide.Square,
                     contentDescription = "Tabs",
-                    modifier = Modifier.size(36.dp),
+                    modifier = Modifier.size(25.dp),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
+                Text(text = "15", fontSize = 10.sp, fontWeight = FontWeight.Bold)
             }
             IconButton(onClick = {
                 modalContent = "Menu"
@@ -138,7 +150,6 @@ fun BottomNavBar() {
             }
         }
     }
-
 }
 
 
