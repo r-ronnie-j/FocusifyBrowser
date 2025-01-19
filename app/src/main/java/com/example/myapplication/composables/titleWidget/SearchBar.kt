@@ -1,6 +1,7 @@
 package com.example.myapplication.composables.titleWidget
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -98,6 +99,12 @@ fun SearchBar() {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
             }
+        }
+    }
+
+    BackHandler {
+        if (!titleBarViewModel.isTitleBar) {
+            titleBarViewModel.isTitleBar = true
         }
     }
 

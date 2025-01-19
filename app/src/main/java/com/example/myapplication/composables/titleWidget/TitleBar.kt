@@ -30,7 +30,9 @@ fun TitleBar(searchTitle: String) {
             .clickable {
 
             }
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .height(32.dp)
+        ,
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
