@@ -88,6 +88,28 @@ fun TopBottomDrawer() {
                 }
         ) {
             WebViewComposable()
+            if (showTop || showBottom) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            MaterialTheme.colorScheme.surfaceContainer.copy(
+                                alpha = 0.8f
+                            )
+                        )
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onTap = {
+                                    if (showTop || showBottom) {
+                                        showTop = false
+                                        showBottom = false
+                                    }
+                                    titleBarViewModel.isTitleBar = true
+                                }
+                            )
+                        }
+                )
+            }
         }
         Box(
             modifier = Modifier
