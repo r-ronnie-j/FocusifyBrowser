@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,12 @@ import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val isDarkTheme =
+            (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+        setTheme(if (isDarkTheme) R.style.Theme_FocusifyBrowser_Dark else R.style.Theme_FocusifyBrowser_Light)
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
