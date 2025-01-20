@@ -1,6 +1,7 @@
 package com.example.myapplication.composables.bottomBar
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 import compose.icons.Octicons
 import compose.icons.octicons.Globe24
 
@@ -34,6 +36,7 @@ import compose.icons.octicons.Globe24
 )
 @Composable
 fun TabModal() {
+    val webviewModel = LocalWebTabViewModel.current
     Column(
         modifier = Modifier
             .heightIn(0.dp, 600.dp)
@@ -43,27 +46,19 @@ fun TabModal() {
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
-            IndividualTab()
+            webviewModel.title.forEachIndexed { index, s ->
+                IndividualTab(text = s, selected = index == webviewModel.activeIndex.intValue)
+            }
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            IconButton(onClick = {
-
-            }) {
+            IconButton(
+                onClick = {
+                    webviewModel.activeIndex.value += 1
+                }) {
                 Icon(imageVector = Icons.Sharp.Add, contentDescription = "Add new Tab")
             }
         }
@@ -71,7 +66,10 @@ fun TabModal() {
 }
 
 @Composable
-fun IndividualTab() {
+fun IndividualTab(
+    text: String,
+    selected: Boolean
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 10.dp)
@@ -79,13 +77,17 @@ fun IndividualTab() {
         Icon(
             imageVector = Octicons.Globe24,
             contentDescription = "Home Page",
-            modifier = Modifier.padding(start = 12.dp, end = 8.dp).height(16.dp),
+            modifier = Modifier
+                .padding(start = 12.dp, end = 8.dp)
+                .height(16.dp),
+            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
         )
         Text(
-            text = "AEW Search or go to new browser and find new pages and what the fuck",
+            text = text,
             maxLines = 1,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             overflow = TextOverflow.Ellipsis,
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 10.dp)
@@ -93,7 +95,10 @@ fun IndividualTab() {
         Icon(
             imageVector = Icons.Sharp.Clear,
             contentDescription = "Home Page",
-            modifier = Modifier.padding(end = 12.dp,start=8.dp).height(16.dp)
+            modifier = Modifier
+                .padding(end = 12.dp, start = 8.dp)
+                .height(24.dp),
+            tint = MaterialTheme.colorScheme.error
         )
     }
 }

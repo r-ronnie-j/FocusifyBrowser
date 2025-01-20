@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,7 +32,6 @@ import compose.icons.octicons.ChevronRight24
 import compose.icons.octicons.Home24
 import compose.icons.octicons.ThreeBars16
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
     wallpaper = Wallpapers.GREEN_DOMINATED_EXAMPLE,
@@ -43,6 +42,7 @@ import compose.icons.octicons.ThreeBars16
 fun BottomNavBar() {
     val webviewModel = LocalWebTabViewModel.current
     val titleBarViewModel = LocalTitleBar.current
+    val activeIndex = webviewModel.activeIndex
 
     BottomAppBar(
         modifier = Modifier
@@ -56,7 +56,7 @@ fun BottomNavBar() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)?.goBack()
+                webviewModel.webViewTabs.getOrNull(activeIndex.value)?.goBack()
             }) {
                 Icon(
                     imageVector = Octicons.ChevronLeft24,
@@ -66,7 +66,7 @@ fun BottomNavBar() {
                 )
             }
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)?.goForward()
+                webviewModel.webViewTabs.getOrNull(activeIndex.value)?.goForward()
             }) {
                 Icon(
                     imageVector = Octicons.ChevronRight24,
@@ -76,7 +76,7 @@ fun BottomNavBar() {
                 )
             }
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)
+                webviewModel.webViewTabs.getOrNull(activeIndex.value)
                     ?.loadUrl("https://www.google.com")
             }) {
                 Icon(

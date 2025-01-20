@@ -1,18 +1,14 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
-import android.os.Build
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.example.myapplication.webkit.AayamWebView
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 
 class WebTabViewModel : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
-    var activeIndex by mutableStateOf(0)
+    var activeIndex = mutableIntStateOf(0)
     var title = mutableStateListOf<String>()
 
     fun createWebView(context: Context): AayamWebView {
@@ -30,8 +26,8 @@ class WebTabViewModel : ViewModel() {
     }
 
     fun updateWebView(webView: AayamWebView) {
-        if (activeIndex in webViewTabs.indices) {
-            webViewTabs[activeIndex] = webView
+        if (activeIndex.value in webViewTabs.indices) {
+            webViewTabs[activeIndex.value] = webView
         }
     }
 }

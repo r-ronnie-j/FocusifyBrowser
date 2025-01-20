@@ -13,7 +13,6 @@ class AayamWebClient(private val context: Context) : WebViewClient() {
     @Deprecated("Deprecated in Java")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
         if (url != null && url.startsWith("intent://")) {
-            Log.d("intent", "$url")
             val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
             if (intent != null) {
                 val packageManager = context.packageManager
