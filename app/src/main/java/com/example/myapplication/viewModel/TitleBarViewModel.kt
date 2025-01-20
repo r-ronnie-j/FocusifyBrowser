@@ -24,6 +24,8 @@ class TitleBarViewModel : ViewModel() {
     var isTitleBar by mutableStateOf(true)
     val titleBarRequester = FocusRequester()
     var suggestions = MutableStateFlow<List<SearchSuggestion>>(emptyList())
+    var showTabs by mutableStateOf(false)
+    var showMenu by mutableStateOf(false)
 
     init {
         viewModelScope.launch {

@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.myapplication.viewModel.LocalWebTabViewModel
-import com.example.myapplication.webkit.AayamWebView
 
 @Composable
 fun WebViewComposable() {
@@ -31,8 +30,6 @@ fun WebViewComposable() {
         webTabViewModel
             .webViewTabs
             .elementAtOrNull(webTabViewModel.activeIndex)
-            ?.let {
-                it.goBack()
-            }
+            ?.goBack()
     }
 }

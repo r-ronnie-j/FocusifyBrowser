@@ -1,27 +1,18 @@
-package com.example.myapplication.composables
+package com.example.myapplication.composables.bottomBar
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Square
 import com.example.myapplication.composables.widgets.BouncingBox
+import com.example.myapplication.viewModel.LocalTitleBar
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import compose.icons.Octicons
 import compose.icons.octicons.ChevronLeft24
@@ -49,32 +41,8 @@ import compose.icons.octicons.ThreeBars16
 )
 @Composable
 fun BottomNavBar() {
-    var showModal by remember { mutableStateOf(false) }
-    var modalContent by remember { mutableStateOf("") }
     val webviewModel = LocalWebTabViewModel.current
-
-    if (showModal) {
-        ModalBottomSheet(onDismissRequest = { showModal = false }) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-            ) {
-                Text(
-                    text = "Bottom Modal: $modalContent",
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Button(
-                    onClick = { showModal = false },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text("Close")
-                }
-            }
-        }
-    }
+    val titleBarViewModel = LocalTitleBar.current
 
     BottomAppBar(
         modifier = Modifier
@@ -87,7 +55,9 @@ fun BottomNavBar() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* Handle back navigation */ }) {
+            IconButton(onClick = {
+                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)?.goBack()
+            }) {
                 Icon(
                     imageVector = Octicons.ChevronLeft24,
                     contentDescription = "Backward",
@@ -95,7 +65,9 @@ fun BottomNavBar() {
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            IconButton(onClick = { /* Handle forward navigation */ }) {
+            IconButton(onClick = {
+                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)?.goForward()
+            }) {
                 Icon(
                     imageVector = Octicons.ChevronRight24,
                     contentDescription = "Forward",
@@ -103,7 +75,10 @@ fun BottomNavBar() {
                     tint = MaterialTheme.colorScheme.onBackground
                 )
             }
-            IconButton(onClick = { /* Handle home navigation */ }) {
+            IconButton(onClick = {
+                webviewModel.webViewTabs.getOrNull(webviewModel.activeIndex)
+                    ?.loadUrl("https://www.google.com")
+            }) {
                 Icon(
                     imageVector = Octicons.Home24,
                     contentDescription = "Home",
@@ -112,7 +87,9 @@ fun BottomNavBar() {
                 )
             }
             BouncingBox(
-                onClick = {}
+                onClick = {
+                    titleBarViewModel.showTabs = !titleBarViewModel.showTabs
+                }
             ) {
                 Icon(
                     imageVector = Lucide.Square,
@@ -127,8 +104,7 @@ fun BottomNavBar() {
                 )
             }
             IconButton(onClick = {
-                modalContent = "Menu"
-                showModal = true
+                titleBarViewModel.showMenu = !titleBarViewModel.showMenu
             }) {
                 Icon(
                     imageVector = Octicons.ThreeBars16,

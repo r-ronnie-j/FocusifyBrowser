@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +29,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.myapplication.composables.bottomBar.MenuModal
+import com.example.myapplication.composables.bottomBar.TabModal
 import com.example.myapplication.composables.titleWidget.SuggestionComposable
 import com.example.myapplication.viewModel.LocalTitleBar
 
@@ -39,7 +40,6 @@ fun TopBottomDrawer() {
 
     var showTop by remember { mutableStateOf(false) }
     var showBottom by remember { mutableStateOf(false) }
-
     val titleBarViewModel = LocalTitleBar.current
     val suggestions = titleBarViewModel.suggestions.collectAsState()
 
@@ -105,6 +105,8 @@ fun TopBottomDrawer() {
                                         showBottom = false
                                     }
                                     titleBarViewModel.isTitleBar = true
+                                    titleBarViewModel.showTabs = false
+                                    titleBarViewModel.showMenu = false
                                 }
                             )
                         }
@@ -117,18 +119,29 @@ fun TopBottomDrawer() {
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .background(MaterialTheme.colorScheme.surface)
                 .animateContentSize(
-                    animationSpec = tween(400)
+                    animationSpec = tween(200)
                 )
-                .height(if (showBottom) 152.dp else 0.dp)
                 .align(Alignment.BottomStart)
                 .zIndex(1f)
                 .verticalScroll(
                     rememberScrollState()
                 )
-        )
+        ) {
+            if (titleBarViewModel.showTabs) {
+                TabModal()
+            }
+            if (titleBarViewModel.showMenu) {
+                MenuModal()
+            }
+        }
     }
 
     LaunchedEffect(key1 = titleBarViewModel.isTitleBar) {
         showTop = !titleBarViewModel.isTitleBar
     }
+
+    LaunchedEffect(titleBarViewModel.showTabs, titleBarViewModel.showMenu) {
+        showBottom = titleBarViewModel.showTabs || titleBarViewModel.showMenu
+    }
+
 }
