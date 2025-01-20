@@ -1,7 +1,7 @@
 package com.example.myapplication.composables.bottomBar
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,7 +47,7 @@ fun TabModal() {
                 .verticalScroll(rememberScrollState())
         ) {
             webviewModel.title.forEachIndexed { index, s ->
-                IndividualTab(text = s, selected = index == webviewModel.activeIndex.intValue)
+                IndividualTab(text = s, index)
             }
         }
         Box(
@@ -57,7 +57,7 @@ fun TabModal() {
         ) {
             IconButton(
                 onClick = {
-                    webviewModel.activeIndex.value += 1
+                    webviewModel.activeIndex.intValue += 1
                 }) {
                 Icon(imageVector = Icons.Sharp.Add, contentDescription = "Add new Tab")
             }
@@ -68,11 +68,16 @@ fun TabModal() {
 @Composable
 fun IndividualTab(
     text: String,
-    selected: Boolean
+    index: Int
 ) {
+    val webviewModel = LocalWebTabViewModel.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 10.dp)
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .clickable {
+                webviewModel.activeIndex.intValue = index
+            }
     ) {
         Icon(
             imageVector = Octicons.Globe24,
@@ -80,14 +85,14 @@ fun IndividualTab(
             modifier = Modifier
                 .padding(start = 12.dp, end = 8.dp)
                 .height(16.dp),
-            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+            tint = if (index == webviewModel.activeIndex.intValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
         )
         Text(
             text = text,
             maxLines = 1,
             style = MaterialTheme.typography.bodyMedium,
             overflow = TextOverflow.Ellipsis,
-            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+            color = if (index == webviewModel.activeIndex.intValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 10.dp)
