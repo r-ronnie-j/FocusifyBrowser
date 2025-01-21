@@ -89,31 +89,7 @@ fun TopBottomDrawer() {
                 }
         ) {
             WebViewComposable()
-            if (showTop || showBottom) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(
-//                            MaterialTheme.colorScheme.onBackground.copy(
-//                                alpha = 0.3f
-//                            )
-//                        )
-//                        .pointerInput(Unit) {
-//                            detectTapGestures(
-//                                onTap = {
-//                                    if (showTop || showBottom) {
-//                                        showTop = false
-//                                        showBottom = false
-//                                    }
-//                                    titleBarViewModel.isTitleBar = true
-//                                    titleBarViewModel.showTabs = false
-//                                    titleBarViewModel.showMenu = false
-//                                }
-//                            )
-//                        }
-//                )
-                AnimatedAlphaBox(showTop, showBottom)
-            }
+            AnimatedAlphaBox(showTop, showBottom)
         }
         Box(
             modifier = Modifier
@@ -153,7 +129,7 @@ fun TopBottomDrawer() {
 fun AnimatedAlphaBox(showTop: Boolean, showBottom: Boolean) {
     val titleBarViewModel = LocalTitleBar.current
     val animatedAlpha = animateFloatAsState(
-        targetValue = if (showTop || showBottom) 0.3f else 0f,
+        targetValue = if (showTop || showBottom) 0.2f else 0f,
         animationSpec = tween(durationMillis = 300)
     )
 
