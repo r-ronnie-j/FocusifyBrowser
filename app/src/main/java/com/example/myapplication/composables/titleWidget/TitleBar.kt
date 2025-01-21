@@ -59,7 +59,9 @@ fun TitleBar() {
                 }
         )
         IconButton(
-            onClick = { },
+            onClick = {
+                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.reload()
+            },
         ) {
             Icon(
                 imageVector = Icons.Filled.Refresh,

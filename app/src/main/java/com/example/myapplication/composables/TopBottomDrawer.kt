@@ -1,6 +1,8 @@
 package com.example.myapplication.composables
 
+import MenuModal
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,7 +31,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.example.myapplication.composables.bottomBar.MenuModal
 import com.example.myapplication.composables.bottomBar.TabModal
 import com.example.myapplication.composables.titleWidget.SuggestionComposable
 import com.example.myapplication.viewModel.LocalTitleBar
@@ -89,28 +90,29 @@ fun TopBottomDrawer() {
         ) {
             WebViewComposable()
             if (showTop || showBottom) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            MaterialTheme.colorScheme.surfaceContainer.copy(
-                                alpha = 0.8f
-                            )
-                        )
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onTap = {
-                                    if (showTop || showBottom) {
-                                        showTop = false
-                                        showBottom = false
-                                    }
-                                    titleBarViewModel.isTitleBar = true
-                                    titleBarViewModel.showTabs = false
-                                    titleBarViewModel.showMenu = false
-                                }
-                            )
-                        }
-                )
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(
+//                            MaterialTheme.colorScheme.onBackground.copy(
+//                                alpha = 0.3f
+//                            )
+//                        )
+//                        .pointerInput(Unit) {
+//                            detectTapGestures(
+//                                onTap = {
+//                                    if (showTop || showBottom) {
+//                                        showTop = false
+//                                        showBottom = false
+//                                    }
+//                                    titleBarViewModel.isTitleBar = true
+//                                    titleBarViewModel.showTabs = false
+//                                    titleBarViewModel.showMenu = false
+//                                }
+//                            )
+//                        }
+//                )
+                AnimatedAlphaBox(showTop, showBottom)
             }
         }
         Box(
@@ -144,4 +146,33 @@ fun TopBottomDrawer() {
         showBottom = titleBarViewModel.showTabs || titleBarViewModel.showMenu
     }
 
+}
+
+
+@Composable
+fun AnimatedAlphaBox(showTop: Boolean, showBottom: Boolean) {
+    val titleBarViewModel = LocalTitleBar.current
+    val animatedAlpha = animateFloatAsState(
+        targetValue = if (showTop || showBottom) 0.3f else 0f,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    if (showTop || showBottom) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = animatedAlpha.value)
+                )
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            titleBarViewModel.isTitleBar = true
+                            titleBarViewModel.showTabs = false
+                            titleBarViewModel.showMenu = false
+                        }
+                    )
+                }
+        )
+    }
 }
