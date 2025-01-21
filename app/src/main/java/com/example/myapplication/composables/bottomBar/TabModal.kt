@@ -57,7 +57,7 @@ fun TabModal() {
         ) {
             IconButton(
                 onClick = {
-                    webviewModel.activeIndex.intValue += 1
+                    webviewModel.activeIndex.intValue = webviewModel.webViewTabs.size
                 }) {
                 Icon(imageVector = Icons.Sharp.Add, contentDescription = "Add new Tab")
             }
