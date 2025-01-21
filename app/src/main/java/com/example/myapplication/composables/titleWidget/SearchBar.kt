@@ -60,6 +60,7 @@ fun SearchBar() {
                 ),
                 keyboardActions = KeyboardActions(
                     onSearch = {
+                        titleBarViewModel.isTitleBar = true
                         webViewModel.performSearch(
                             titleBarViewModel.searchText.value.text,
                             titleBarViewModel.searchEngine
@@ -106,6 +107,7 @@ fun SearchBar() {
             }
             if (titleBarViewModel.isFocused || searchText.value.text.isNotEmpty()) {
                 IconButton(onClick = {
+                    titleBarViewModel.isTitleBar = true
                     webViewModel.performSearch(
                         titleBarViewModel.searchText.value.text,
                         titleBarViewModel.searchEngine

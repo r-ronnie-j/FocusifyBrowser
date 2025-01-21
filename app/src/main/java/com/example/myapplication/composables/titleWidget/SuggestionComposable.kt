@@ -27,12 +27,14 @@ import com.composables.icons.lucide.Search
 import com.example.myapplication.viewModel.LocalTitleBar
 import com.example.myapplication.dataClass.SearchSuggestion
 import com.example.myapplication.dataClass.SuggestionType
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 
 @Composable
 fun SuggestionComposable(suggestion: SearchSuggestion) {
 
     val clipboardManager = LocalClipboardManager.current
     val titleBarViewModel = LocalTitleBar.current
+    val webViewModel = LocalWebTabViewModel.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -53,6 +55,11 @@ fun SuggestionComposable(suggestion: SearchSuggestion) {
                     titleBarViewModel.searchText.value = TextFieldValue(
                         text = suggestion.text,
                         selection = TextRange(index = suggestion.text.length)
+                    )
+                    titleBarViewModel.isTitleBar = true
+                    webViewModel.performSearch(
+                        titleBarViewModel.searchText.value.text,
+                        titleBarViewModel.searchEngine
                     )
                 }
         ) {
