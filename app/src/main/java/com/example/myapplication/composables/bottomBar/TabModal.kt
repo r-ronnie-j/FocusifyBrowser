@@ -1,6 +1,7 @@
 package com.example.myapplication.composables.bottomBar
 
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.dataClass.TabInfo
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import compose.icons.Octicons
 import compose.icons.octicons.Globe24
@@ -46,8 +50,8 @@ fun TabModal() {
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
         ) {
-            webviewModel.title.forEachIndexed { index, s ->
-                IndividualTab(text = s, index)
+            webviewModel.tabInfo.forEachIndexed { index, s ->
+                IndividualTab(tab = s, index)
             }
         }
         Box(
@@ -67,7 +71,7 @@ fun TabModal() {
 
 @Composable
 fun IndividualTab(
-    text: String,
+    tab: TabInfo,
     index: Int
 ) {
     val webviewModel = LocalWebTabViewModel.current
@@ -79,16 +83,26 @@ fun IndividualTab(
                 webviewModel.activeIndex.intValue = index
             }
     ) {
-        Icon(
-            imageVector = Octicons.Globe24,
-            contentDescription = "Home Page",
-            modifier = Modifier
-                .padding(start = 12.dp, end = 8.dp)
-                .height(16.dp),
-            tint = if (index == webviewModel.activeIndex.intValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-        )
+        if (tab.favIcon == null) {
+            Icon(
+                imageVector = Octicons.Globe24,
+                contentDescription = "Home Page",
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 8.dp)
+                    .height(16.dp),
+                tint = if (index == webviewModel.activeIndex.intValue) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+            )
+        } else {
+            Image(
+                painter = BitmapPainter(tab.favIcon.asImageBitmap()),
+                contentDescription = tab.title,
+                modifier = Modifier
+                    .padding(start = 12.dp, end = 8.dp)
+                    .height(18.dp),
+            )
+        }
         Text(
-            text = text,
+            text = tab.title,
             maxLines = 1,
             style = MaterialTheme.typography.bodyMedium,
             overflow = TextOverflow.Ellipsis,

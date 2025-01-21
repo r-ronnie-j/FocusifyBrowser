@@ -1,7 +1,9 @@
 package com.example.myapplication.webkit
 
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -10,9 +12,11 @@ import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
 
+@SuppressLint("SetJavaScriptEnabled")
 class AayamWebView(
     context: Context,
-    onTitleReceive: (a: String) -> Unit
+    onTitleReceive: (a: String?) -> Unit,
+    onIconReceive: (a: Bitmap) -> Unit
 ) : WebView(context) {
 
     init {
@@ -57,6 +61,10 @@ class AayamWebView(
         }
 
         webViewClient = AayamWebClient(context)
-        webChromeClient = AayamWebChrome(context, onTitleReceive)
+        webChromeClient = AayamWebChrome(
+            context,
+            onTitleReceive = onTitleReceive,
+            onIconReceive = onIconReceive
+        )
     }
 }

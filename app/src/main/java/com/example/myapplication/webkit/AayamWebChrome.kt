@@ -3,6 +3,7 @@ package com.example.myapplication.webkit
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -10,7 +11,8 @@ import android.widget.FrameLayout
 
 class AayamWebChrome(
     private val context: Context,
-    private val onTitleReceive: (a: String) -> Unit
+    private val onTitleReceive: (a: String?) -> Unit,
+    private val onIconReceive: (a: Bitmap) -> Unit
 ) : WebChromeClient() {
     private var view: View? = null
     override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
@@ -30,8 +32,13 @@ class AayamWebChrome(
 
     override fun onReceivedTitle(view: WebView?, title: String?) {
         super.onReceivedTitle(view, title)
-        title?.let {
-            onTitleReceive(it)
+        onTitleReceive(title)
+    }
+
+    override fun onReceivedIcon(view: WebView?, icon: Bitmap?) {
+        super.onReceivedIcon(view, icon)
+        icon?.let {
+            onIconReceive(it)
         }
     }
 

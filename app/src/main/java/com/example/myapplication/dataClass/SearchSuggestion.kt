@@ -1,4 +1,4 @@
-package com.example.myapplication.utilData
+package com.example.myapplication.dataClass
 
 enum class SuggestionType {
     History,

@@ -8,8 +8,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.utilData.SearchSuggestion
-import com.example.myapplication.utilData.SuggestionType
+import com.example.myapplication.dataClass.SearchSuggestion
+import com.example.myapplication.dataClass.SuggestionType
 import com.example.myapplication.utilities.extractSearchSuggestion
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

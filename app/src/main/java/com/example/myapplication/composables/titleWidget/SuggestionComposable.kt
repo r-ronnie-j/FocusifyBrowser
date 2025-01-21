@@ -25,8 +25,8 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Search
 import com.example.myapplication.viewModel.LocalTitleBar
-import com.example.myapplication.utilData.SearchSuggestion
-import com.example.myapplication.utilData.SuggestionType
+import com.example.myapplication.dataClass.SearchSuggestion
+import com.example.myapplication.dataClass.SuggestionType
 
 @Composable
 fun SuggestionComposable(suggestion: SearchSuggestion) {
