@@ -46,7 +46,7 @@ class WebTabViewModel : ViewModel() {
                     )
                 } else if (index < tabInfo.size) {
                     tabInfo[index] = tabInfo[index].copy(
-                        title = "No title found"
+                        title = it ?: "No title found"
                     )
                 }
             },
@@ -66,7 +66,7 @@ class WebTabViewModel : ViewModel() {
                 }
             }
         )
-        webView.loadUrl("https://www.duckduckgo.com")
+        webView.loadUrl("file:///android_asset/home.html")
         webViewTabs.add(index, webView)
         return webView
     }
