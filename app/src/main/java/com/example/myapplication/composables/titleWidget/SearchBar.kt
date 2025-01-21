@@ -2,12 +2,12 @@ package com.example.myapplication.composables.titleWidget
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -19,15 +19,14 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Wallpapers
-import com.example.myapplication.R
 import com.example.myapplication.viewModel.LocalTitleBar
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
@@ -39,6 +38,7 @@ import com.example.myapplication.viewModel.LocalTitleBar
 fun SearchBar() {
     val titleBarViewModel = LocalTitleBar.current
     val searchText = titleBarViewModel.searchText.collectAsState()
+    val webViewModel = LocalWebTabViewModel.current
     if (titleBarViewModel.isTitleBar) {
         TitleBar()
     } else {
@@ -53,6 +53,14 @@ fun SearchBar() {
             BasicTextField(
                 value = searchText.value,
                 onValueChange = { titleBarViewModel.searchText.value = it },
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        webViewModel.performSearch(
+                            titleBarViewModel.searchText.value.text,
+                            titleBarViewModel.searchEngine
+                        )
+                    }
+                ),
                 modifier = Modifier
                     .weight(1f)
                     .background(Color.Transparent)
@@ -92,11 +100,18 @@ fun SearchBar() {
                 }
             }
             if (titleBarViewModel.isFocused || searchText.value.text.isNotEmpty()) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search Icon",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                IconButton(onClick = {
+                    webViewModel.performSearch(
+                        titleBarViewModel.searchText.value.text,
+                        titleBarViewModel.searchEngine
+                    )
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search Icon",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
                 Spacer(modifier = Modifier.width(4.dp))
             }
         }
@@ -116,88 +131,4 @@ fun SearchBar() {
 }
 
 
-@Composable
-fun SearchEngineDropDown() {
-    var expanded by remember { mutableStateOf(false) }
 
-    var searchEngine by remember {
-        mutableIntStateOf(0)
-    }
-
-    val searchEngineResourceId = arrayOf(
-        R.drawable.google,
-        R.drawable.duckduckgo,
-        R.drawable.yandex,
-        R.drawable.bing
-    )
-
-    IconButton(onClick = { expanded = true }, modifier = Modifier.wrapContentHeight()) {
-        Image(
-            painter = painterResource(id = searchEngineResourceId[searchEngine]),
-            contentDescription = "Show Search Engines",
-            modifier = Modifier.size(if (searchEngine == 1) 20.dp else 14.dp)
-        )
-    }
-
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false }
-    ) {
-        DropdownMenuItem(
-            text = { Text("Google") },
-            onClick = {
-                searchEngine = 0
-                expanded = false
-            },
-            leadingIcon = {
-                Image(
-                    painter = painterResource(id = searchEngineResourceId[0]),
-                    contentDescription = "Google Icon",
-                    modifier = Modifier.size(14.dp) // Set the size of the icon
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("DuckDuckGo") },
-            onClick = {
-                searchEngine = 1
-                expanded = false
-            },
-            leadingIcon = {
-                Image(
-                    painter = painterResource(id = searchEngineResourceId[1]),
-                    contentDescription = "DuckDuckGo Icon",
-                    modifier = Modifier.size(16.dp) // Set the size of the icon
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Yandex") },
-            onClick = {
-                searchEngine = 2
-                expanded = false
-            },
-            leadingIcon = {
-                Image(
-                    painter = painterResource(id = searchEngineResourceId[2]),
-                    contentDescription = "Yandex Icon",
-                    modifier = Modifier.size(14.dp) // Set the size of the icon
-                )
-            }
-        )
-        DropdownMenuItem(
-            text = { Text("Bing") },
-            onClick = {
-                searchEngine = 3
-                expanded = false
-            },
-            leadingIcon = {
-                Image(
-                    painter = painterResource(id = searchEngineResourceId[3]),
-                    contentDescription = "Bing Icon",
-                    modifier = Modifier.size(14.dp) // Set the size of the icon
-                )
-            }
-        )
-    }
-}

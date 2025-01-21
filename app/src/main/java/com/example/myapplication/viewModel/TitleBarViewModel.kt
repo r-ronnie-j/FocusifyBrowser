@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.dataClass.SearchSuggestion
 import com.example.myapplication.dataClass.SuggestionType
+import com.example.myapplication.utilities.enums.SearchEngines
 import com.example.myapplication.utilities.extractSearchSuggestion
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,7 @@ class TitleBarViewModel : ViewModel() {
     var suggestions = MutableStateFlow<List<SearchSuggestion>>(emptyList())
     var showTabs by mutableStateOf(false)
     var showMenu by mutableStateOf(false)
+    var searchEngine by mutableStateOf(SearchEngines.Google)
 
     init {
         viewModelScope.launch {

@@ -6,12 +6,30 @@ import com.example.myapplication.webkit.AayamWebView
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.dataClass.TabInfo
+import com.example.myapplication.utilities.enums.SearchEngines
+import java.net.URLEncoder
 
 class WebTabViewModel : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
     var activeIndex = mutableIntStateOf(0)
     var tabInfo = mutableStateListOf<TabInfo>()
     var isIncognito by mutableStateOf(false)
+
+    fun performSearch(
+        text: String,
+        searchEngine: SearchEngines
+    ) {
+        val webView = webViewTabs[activeIndex.intValue]
+        val query = URLEncoder.encode(text, "UTF-8")
+        val url = when (searchEngine) {
+            SearchEngines.Google -> "https://www.google.com/search?q=$query"
+            SearchEngines.Duckduckgo -> "https://duckduckgo.com/?q=$query"
+            SearchEngines.Yandex -> "https://yandex.com/search/?text=$query"
+            SearchEngines.Bing -> "https://www.bing.com/search?q=$query"
+        }
+        webView.loadUrl(url)
+    }
+
 
     fun createWebView(context: Context): AayamWebView {
         val index = webViewTabs.size
