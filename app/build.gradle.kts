@@ -72,4 +72,5 @@ dependencies {
     implementation(libs.okhttp)
     runtimeOnly(libs.androidx.webkit)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.room.runtime)
 }
