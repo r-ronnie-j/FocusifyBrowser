@@ -8,6 +8,7 @@ enum class FilterPageNavigation {
     FilterByCategory,
     WhiteList,
     BlackList,
+    FilterByKeyword,
     FilterDownloads,
 }
 

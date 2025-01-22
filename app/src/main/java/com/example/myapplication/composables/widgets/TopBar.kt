@@ -1,6 +1,7 @@
 package com.example.myapplication.composables.widgets
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -12,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.composables.icons.lucide.ArrowLeft
-import com.composables.icons.lucide.Lucide
+import compose.icons.Octicons
+import compose.icons.octicons.ChevronLeft24
 
 @Composable
 fun TopBar(
@@ -21,22 +22,24 @@ fun TopBar(
     text: String
 ) {
     Row(
-        modifier = Modifier.padding(
-            top = 4.dp,
-            bottom = 5.dp,
-            start = 10.dp,
-            end = 10.dp
-        ),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(
+                top = 4.dp,
+                bottom = 5.dp,
+                start = 8.dp,
+                end = 8.dp
+            )
+            .fillMaxWidth(),
     ) {
         if (onClick != null) {
             IconButton(onClick = onClick) {
-                Icon(imageVector = Lucide.ArrowLeft, contentDescription = "Go Back")
+                Icon(imageVector = Octicons.ChevronLeft24, contentDescription = "Go Back")
             }
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.headlineLarge,
             fontSize = 18.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
