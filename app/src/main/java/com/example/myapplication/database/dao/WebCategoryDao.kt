@@ -1,0 +1,21 @@
+package com.example.myapplication.database.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.example.myapplication.database.entity.WebFilterEntity
+
+@Dao
+interface WebCategoryDao {
+
+    @Query("SELECT * FROM webFilter")
+    fun getAll(): List<WebFilterEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(webFilterEntity: WebFilterEntity)
+
+    @Update()
+    fun update(webFilterEntity: WebFilterEntity)
+}
