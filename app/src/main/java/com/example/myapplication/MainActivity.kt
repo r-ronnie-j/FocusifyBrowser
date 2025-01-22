@@ -5,6 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,7 +58,16 @@ fun StartComposable() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = MainNavigation.HomePage.name
+                    startDestination = MainNavigation.HomePage.name,
+                    enterTransition = {
+                        fadeIn(animationSpec = tween(300)) +
+                                slideInHorizontally(initialOffsetX = { -it })
+                    },
+                    exitTransition = {
+                        fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
+                            targetOffsetX = { -it }
+                        )
+                    }
                 ) {
                     composable(route = MainNavigation.HomePage.name) {
                         HomePage()
