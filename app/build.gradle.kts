@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.icons.lucide)
     implementation(libs.okhttp)
     runtimeOnly(libs.androidx.webkit)
+    implementation(libs.androidx.navigation.compose)
 }

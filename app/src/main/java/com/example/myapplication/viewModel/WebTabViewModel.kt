@@ -66,7 +66,7 @@ class WebTabViewModel : ViewModel() {
                 }
             }
         )
-        webView.loadUrl("file:///android_asset/home.html")
+        webView.loadUrl("file:///android_asset/home/home.html")
         webViewTabs.add(index, webView)
         return webView
     }

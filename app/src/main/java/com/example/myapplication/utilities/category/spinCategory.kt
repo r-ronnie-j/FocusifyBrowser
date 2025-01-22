@@ -1,7 +1,6 @@
 package com.example.myapplication.utilities.category
 
 import android.util.Log
-import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.utilities.client
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +9,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.IOException
 import java.net.URI
 
 suspend fun spinCategory(url: String): List<SpinWebCategory> {
