@@ -6,15 +6,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import com.example.myapplication.composables.bottomBar.BottomNavBar
-import com.example.myapplication.composables.titleWidget.SearchBar
-import com.example.myapplication.composables.TopBottomDrawer
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.navigation.LocalMainNavigationProvider
+import com.example.myapplication.navigation.MainNavigation
+import com.example.myapplication.routes.FilterPage
+import com.example.myapplication.routes.HomePage
 import com.example.myapplication.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,22 +34,32 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyApplicationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxHeight()
-                    ) {
-                        Column {
-                            SearchBar()
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                            ) {
-                                TopBottomDrawer()
-                            }
-                            BottomNavBar()
-                        }
+                StartComposable()
+            }
+        }
+    }
+}
+
+@Composable
+fun StartComposable() {
+    val navController = rememberNavController()
+    CompositionLocalProvider(LocalMainNavigationProvider provides navController) {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxHeight()
+            ) {
+
+                NavHost(
+                    navController = navController,
+                    startDestination = MainNavigation.HomePage.name
+                ) {
+                    composable(route = MainNavigation.HomePage.name) {
+                        HomePage()
+                    }
+                    composable(route = MainNavigation.FilterPage.name) {
+                        FilterPage()
                     }
                 }
             }
