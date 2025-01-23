@@ -1,12 +1,19 @@
 package com.example.myapplication.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.dataClass.categoryList
+import com.example.myapplication.database.db
+import com.example.myapplication.database.entity.WebFilterEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FilterViewModel : ViewModel() {
     val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
@@ -21,10 +28,49 @@ class FilterViewModel : ViewModel() {
         })
     }
 
+    init {
+        db?.let { db ->
+            Log.d("database", "database has been initialized")
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val filters = db.webCategoryDao().getAll()
+                    filters.forEach {
+                        Log.d("database", "${it.filterCategory} ${it.blocked}")
+                    }
+                }
+            }
+        }
+    }
+
     fun changeStatus(index: Int) {
+        Log.d("database", "Are we called for database update")
+        val initialStatus = webCategoryStatusList[index].blocked
         webCategoryStatusList[index] = webCategoryStatusList[index].copy(
-            blocked = !webCategoryStatusList[index].blocked
+            blocked = !initialStatus
         )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                db?.let {
+                    val webCategoryDao = it.webCategoryDao()
+                    Log.d("database", "Update to database has been called")
+                    webCategoryDao.update(
+                        WebFilterEntity(
+                            blocked = !initialStatus,
+                            filterCategory = webCategoryStatusList[index].category.filter
+                        )
+                    )
+                }
+            }
+        }
+        val spin = webCategoryStatusList[index].category.spin
+        val blocksi = webCategoryStatusList[index].category.blocksi
+        if (initialStatus) {
+            spin.forEach { spinBlockCategories.remove(it) }
+            blocksi.forEach { blocksiBlockCategory.remove(it) }
+        } else {
+            spin.forEach { spinBlockCategories.add(it) }
+            blocksi.forEach { blocksiBlockCategory.add(it) }
+        }
     }
 }
 

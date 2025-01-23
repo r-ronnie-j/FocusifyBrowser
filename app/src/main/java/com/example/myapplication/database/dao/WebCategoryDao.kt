@@ -13,8 +13,14 @@ interface WebCategoryDao {
     @Query("SELECT * FROM webFilter")
     fun getAll(): List<WebFilterEntity>
 
+    @Query("SELECT COUNT(*) FROM webFilter")
+    fun getSize(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(webFilterEntity: WebFilterEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(webFilterEntity: List<WebFilterEntity>)
 
     @Update()
     fun update(webFilterEntity: WebFilterEntity)

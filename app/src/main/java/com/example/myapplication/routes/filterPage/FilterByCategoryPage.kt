@@ -24,14 +24,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Lucide
 import com.example.myapplication.composables.widgets.TopBar
 import com.example.myapplication.dataClass.WebCategoryStatus
-import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.navigation.LocalFilterPageNavigationProvider
 import com.example.myapplication.viewModel.LocalFilterModelProvider
 
@@ -117,19 +115,3 @@ fun WebCategoryItem(
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun WebCategoryPreview() {
-    WebCategoryItem(
-        webCategoryStatus = WebCategoryStatus(
-            category = categoryList.first(),
-            blocked = true
-        )
-    ) {
-
-    }
-}

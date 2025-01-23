@@ -1,6 +1,5 @@
 package com.example.myapplication.database
 
-import androidx.compose.runtime.compositionLocalOf
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.myapplication.database.dao.WebCategoryDao
@@ -16,6 +15,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun webCategoryDao(): WebCategoryDao
 }
 
-val LocalDatabase = compositionLocalOf {
-    error("No database created or provided")
-}
+var db: AppDatabase? = null
