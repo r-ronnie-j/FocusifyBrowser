@@ -71,7 +71,7 @@ dependencies {
     implementation(libs.octicons)
     implementation(libs.icons.lucide)
     implementation(libs.okhttp)
-    runtimeOnly(libs.androidx.webkit)
+    implementation(libs.androidx.webkit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

@@ -1,8 +1,9 @@
 package com.example.myapplication.utilities
 
 fun giveNonAmpUrl(url: String): String {
-    return if (url.startsWith("www.google.com/amp/s/amp")) {
-        url.replace("google.com/amp/s/amp.", "")
+    return if (url.contains("www.google.com/amp/s/amp")) {
+        val m = url.replace("google.com/amp/s/amp.", "")
+        m
     } else {
         url
     }

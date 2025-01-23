@@ -1,12 +1,13 @@
 package com.example.myapplication.webkit
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.webkit.WebViewAssetLoader
 import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.utilities.category.getBlocksiCategory
@@ -21,33 +22,55 @@ class AayamWebClient(
     private val shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean
 ) : WebViewClient() {
 
-    @SuppressLint("QueryPermissionsNeeded")
-    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-        val url = request.url.toString()
-        val testUrl = giveNonAmpUrl(url)
-        Log.d("host", "non amp $testUrl")
-        if (url.startsWith("intent://")) {
-            Log.d("host", "url: $url")
-            val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
-            if (intent != null) {
-                val packageManager = context.packageManager
-                if (intent.resolveActivity(packageManager) != null) {
-                    context.startActivity(intent)
+    val assetLoader = WebViewAssetLoader.Builder()
+        .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
+        .build()
+
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequest
+    ): WebResourceResponse? {
+        return assetLoader.shouldInterceptRequest(request.url)
+    }
+
+    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+
+        if (url != null && !url.startsWith("file")) {
+            val testUrl = giveNonAmpUrl(url)
+            Log.d("host", "non amp $testUrl")
+            if (url.startsWith("intent://")) {
+                Log.d("host", "url: $url")
+                val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+                if (intent != null) {
+                    val packageManager = context.packageManager
+                    if (intent.resolveActivity(packageManager) != null) {
+                        context.startActivity(intent)
+                    }
                 }
-            }
-        } else {
-            CoroutineScope(Dispatchers.Main).launch {
-                val blocksi = getBlocksiCategory(testUrl)
-                val spin = getSpinCategory(testUrl)
-                if (shouldBlock(blocksi, spin)) {
-                    val replaceUrl = "file:///android_asset/block/index.html"
-                    view.loadUrl(replaceUrl)
-                } else {
-                    view.loadUrl(url)
+            } else {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val blocksi = getBlocksiCategory(testUrl)
+                    val spin = getSpinCategory(testUrl)
+                    if (shouldBlock(blocksi, spin)) {
+                        val replaceUrl =
+                            "https://appassets.androidplatform.net/assets/block/index.html"
+                        view?.evaluateJavascript(
+                            """
+                            (function() { 
+                                console.log('Replacing URL...');
+                                window.location.replace('$replaceUrl'); 
+                                return "done"
+                            })();
+                            """
+                        ) { result ->
+                            Log.d("WebClient", "Result from JavaScript: $result")
+                        }
+                    } else {
+//                        super.doUpdateVisitedHistory(view, url, isReload)
+                    }
                 }
             }
         }
-        return true
     }
 }
 

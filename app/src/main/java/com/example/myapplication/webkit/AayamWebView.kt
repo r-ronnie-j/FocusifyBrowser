@@ -32,6 +32,7 @@ class AayamWebView(
         settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
+            allowFileAccess = true
             loadsImagesAutomatically = true
             loadWithOverviewMode = true
             useWideViewPort = true
