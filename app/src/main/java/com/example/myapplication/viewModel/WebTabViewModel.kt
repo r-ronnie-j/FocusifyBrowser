@@ -96,14 +96,13 @@ class WebTabViewModel : ViewModel() {
         val isValidUrl = try {
             val url = URL(text)
             url.protocol == "http" || url.protocol == "https"
-        } catch (e: Error) {
+        } catch (e: Exception) {
             false
         }
 
         val url = if (isValidUrl) {
-            text // Navigate directly to the valid URL
+            text
         } else {
-            // Encode and search using the chosen search engine
             val query = URLEncoder.encode(text, "UTF-8")
             when (searchEngine) {
                 SearchEngines.Google -> "https://www.google.com/search?q=$query"
