@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,17 +59,33 @@ fun TitleBar() {
                     titleBarViewModel.isTitleBar = false
                 }
         )
-        IconButton(
-            onClick = {
-                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.reload()
-            },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Refresh,
-                contentDescription = "Clear Text",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.height(24.dp)
-            )
+
+        if (webviewModel.tabInfo.size > activeIndex.intValue && webviewModel.tabInfo[activeIndex.intValue].progress != 100) {
+            IconButton(
+                onClick = {
+                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.reload()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Stop",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.height(24.dp)
+                )
+            }
+        } else {
+            IconButton(
+                onClick = {
+                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.stopLoading()
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    contentDescription = "Clear Text",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.height(24.dp)
+                )
+            }
         }
     }
 }
