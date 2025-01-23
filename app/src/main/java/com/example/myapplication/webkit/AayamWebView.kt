@@ -11,12 +11,15 @@ import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
+import com.example.myapplication.dataClass.BlocksiCategory
+import com.example.myapplication.dataClass.SpinWebCategory
 
 @SuppressLint("SetJavaScriptEnabled")
 class AayamWebView(
     context: Context,
     onTitleReceive: (a: String?) -> Unit,
-    onIconReceive: (a: Bitmap) -> Unit
+    onIconReceive: (a: Bitmap) -> Unit,
+    shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean
 ) : WebView(context) {
 
     init {
@@ -60,7 +63,7 @@ class AayamWebView(
             downloadManager.enqueue(request)
         }
 
-        webViewClient = AayamWebClient(context)
+        webViewClient = AayamWebClient(context, shouldBlock)
         webChromeClient = AayamWebChrome(
             context,
             onTitleReceive = onTitleReceive,

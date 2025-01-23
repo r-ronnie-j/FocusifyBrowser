@@ -31,12 +31,13 @@ import com.composables.icons.lucide.Lucide
 import com.example.myapplication.composables.widgets.TopBar
 import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.navigation.LocalFilterPageNavigationProvider
-import com.example.myapplication.viewModel.LocalFilterModelProvider
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 
 @Composable
 fun FilterByCategory() {
     val filterNavigator = LocalFilterPageNavigationProvider.current
-    val filterViewModel = LocalFilterModelProvider.current
+    val filterViewModel = LocalWebTabViewModel.current
+    val filterCategoryList = filterViewModel.webCategoryStatusList
     Column {
         TopBar(onClick = {
             filterNavigator.popBackStack()
@@ -47,7 +48,7 @@ fun FilterByCategory() {
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            filterViewModel.webCategoryStatusList.mapIndexed() { index, item ->
+            filterCategoryList.mapIndexed() { index, item ->
                 WebCategoryItem(webCategoryStatus = item) {
                     filterViewModel.changeStatus(index)
                 }

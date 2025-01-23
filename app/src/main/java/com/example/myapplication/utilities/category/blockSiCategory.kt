@@ -9,9 +9,9 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.net.URI
 
-suspend fun blocksiCategory(url: String): BlocksiCategory? {
+suspend fun getBlocksiCategory(url: String): List<BlocksiCategory> {
     val host = URI(url).host
-    Log.d("host", "The host of the domain is $host")
+    Log.d("host", "blocksi : The host of the domain is $host")
     val request = Request.Builder()
         .url("http://service2.block.si/getRating.json?url=$host")
         .build()
@@ -20,8 +20,9 @@ suspend fun blocksiCategory(url: String): BlocksiCategory? {
         client.newCall(request).execute().use { response ->
             val responseString = response.body?.string()
             responseString?.let {
-                parseJsonAndExtractTitles(it)
+                listOf(parseJsonAndExtractTitles(it))
             }
+            emptyList()
         }
     }
 }

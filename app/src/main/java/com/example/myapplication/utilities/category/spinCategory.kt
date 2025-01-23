@@ -11,10 +11,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.net.URI
 
-suspend fun spinCategory(url: String): List<SpinWebCategory> {
+suspend fun getSpinCategory(url: String): List<SpinWebCategory> {
     val uri = URI(url)
     val host = uri.host
-    Log.d("host", "The host of the domain is $host")
+    Log.d("host", "spin : The host of the domain is $host")
 
     val jsonObject = JSONObject().apply {
         put("domainName", host)

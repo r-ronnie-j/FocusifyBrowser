@@ -12,7 +12,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,7 +55,7 @@ fun BottomNavBar() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(activeIndex.value)?.goBack()
+                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.goBack()
             }) {
                 Icon(
                     imageVector = Octicons.ChevronLeft24,
@@ -66,7 +65,7 @@ fun BottomNavBar() {
                 )
             }
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(activeIndex.value)?.goForward()
+                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.goForward()
             }) {
                 Icon(
                     imageVector = Octicons.ChevronRight24,
@@ -76,8 +75,8 @@ fun BottomNavBar() {
                 )
             }
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(activeIndex.value)
-                    ?.loadUrl("https://www.google.com")
+                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)
+                    ?.loadUrl("file:///android_asset/home/home.html")
             }) {
                 Icon(
                     imageVector = Octicons.Home24,

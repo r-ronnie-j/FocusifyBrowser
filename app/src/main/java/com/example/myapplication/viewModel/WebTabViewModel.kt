@@ -5,8 +5,18 @@ import androidx.compose.runtime.compositionLocalOf
 import com.example.myapplication.webkit.AayamWebView
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.myapplication.dataClass.BlocksiCategory
+import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.dataClass.TabInfo
+import com.example.myapplication.dataClass.WebCategoryStatus
+import com.example.myapplication.dataClass.categoryList
+import com.example.myapplication.database.db
+import com.example.myapplication.database.entity.WebFilterEntity
 import com.example.myapplication.utilities.enums.SearchEngines
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.URLEncoder
 
 class WebTabViewModel : ViewModel() {
@@ -14,6 +24,67 @@ class WebTabViewModel : ViewModel() {
     var activeIndex = mutableIntStateOf(0)
     var tabInfo = mutableStateListOf<TabInfo>()
     var isIncognito by mutableStateOf(false)
+
+    val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
+    val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
+    val webCategoryStatusList = mutableStateListOf<WebCategoryStatus>()
+
+    init {
+        db?.let { db ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val webCategoryDao = db.webCategoryDao()
+                    val spinFilters = mutableListOf<SpinWebCategory>()
+                    val blocksiFilters = mutableListOf<BlocksiCategory>()
+                    val category = categoryList.map {
+                        val filterStatus = webCategoryDao.getById(it.filter)
+                        if (filterStatus.blocked) {
+                            spinFilters.addAll(it.spin)
+                            blocksiFilters.addAll(it.blocksi)
+                        }
+                        return@map WebCategoryStatus(
+                            category = it,
+                            blocked = filterStatus.blocked
+                        )
+                    }
+                    withContext(Dispatchers.Main) {
+                        webCategoryStatusList.addAll(category)
+                        spinBlockCategories.addAll(spinFilters)
+                        blocksiBlockCategory.addAll(blocksiFilters)
+                    }
+                }
+            }
+        }
+    }
+
+    fun changeStatus(index: Int) {
+        val initialStatus = webCategoryStatusList[index].blocked
+        webCategoryStatusList[index] = webCategoryStatusList[index].copy(
+            blocked = !initialStatus
+        )
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                db?.let {
+                    val webCategoryDao = it.webCategoryDao()
+                    webCategoryDao.update(
+                        WebFilterEntity(
+                            blocked = !initialStatus,
+                            filterCategory = webCategoryStatusList[index].category.filter
+                        )
+                    )
+                }
+            }
+        }
+        val spin = webCategoryStatusList[index].category.spin
+        val blocksi = webCategoryStatusList[index].category.blocksi
+        if (initialStatus) {
+            spin.forEach { spinBlockCategories.remove(it) }
+            blocksi.forEach { blocksiBlockCategory.remove(it) }
+        } else {
+            spin.forEach { spinBlockCategories.add(it) }
+            blocksi.forEach { blocksiBlockCategory.add(it) }
+        }
+    }
 
     fun performSearch(
         text: String,
@@ -64,6 +135,10 @@ class WebTabViewModel : ViewModel() {
                         favIcon = it
                     )
                 }
+            },
+            shouldBlock = { blocksi, spin ->
+                return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
+                        spin.any { spinBlockCategories.contains(it) }
             }
         )
         webView.loadUrl("file:///android_asset/home/home.html")

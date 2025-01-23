@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 
 class FocusifyApplication : Application() {
 
+
+
     override fun onCreate() {
         super.onCreate()
         db = Room
