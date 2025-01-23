@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.myapplication.dataClass.FilterCategory
 import com.example.myapplication.database.entity.WebFilterEntity
 
 @Dao
@@ -15,6 +16,9 @@ interface WebCategoryDao {
 
     @Query("SELECT COUNT(*) FROM webFilter")
     fun getSize(): Int
+
+    @Query("SELECT * FROM webFilter WHERE filterCategory = :filterCategory")
+    fun getById(filterCategory: FilterCategory): WebFilterEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(webFilterEntity: WebFilterEntity)

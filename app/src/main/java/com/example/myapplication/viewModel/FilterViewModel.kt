@@ -19,24 +19,41 @@ class FilterViewModel : ViewModel() {
     val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
 
-    val webCategoryStatusList = mutableStateListOf<WebCategoryStatus>().apply {
-        addAll(categoryList.map {
-            WebCategoryStatus(
-                category = it,
-                blocked = false
-            )
-        })
-    }
+    val webCategoryStatusList = mutableStateListOf<WebCategoryStatus>()
 
     init {
         db?.let { db ->
             Log.d("database", "database has been initialized")
             viewModelScope.launch {
+                Log.d("database", "view model scope is called")
                 withContext(Dispatchers.IO) {
-                    val filters = db.webCategoryDao().getAll()
-                    filters.forEach {
-                        Log.d("database", "${it.filterCategory} ${it.blocked}")
+                    Log.d("database", "dispatcher is called")
+                    val webCategoryDao = db.webCategoryDao()
+                    Log.d("database", "dao is received ${webCategoryStatusList.size}")
+                    val spinFilters = mutableListOf<SpinWebCategory>()
+                    val blocksiFilters = mutableListOf<BlocksiCategory>()
+                    val categoryList = categoryList.map {
+                        Log.d("database", "Are we called")
+                        val filterStatus = webCategoryDao.getById(it.filter)
+                        Log.d(
+                            "database",
+                            "filter ${filterStatus.blocked} ${filterStatus.filterCategory}"
+                        )
+                        if (filterStatus.blocked) {
+                            spinFilters.addAll(it.spin)
+                            blocksiFilters.addAll(it.blocksi)
+                        }
+                        return@map WebCategoryStatus(
+                            category = it,
+                            blocked = filterStatus.blocked
+                        )
                     }
+                    webCategoryStatusList.removeAll(webCategoryStatusList)
+                    webCategoryStatusList.addAll(categoryList)
+                    spinBlockCategories.removeAll(spinBlockCategories)
+                    spinBlockCategories.addAll(spinFilters)
+                    blocksiBlockCategory.removeAll(blocksiBlockCategory)
+                    blocksiBlockCategory.addAll(blocksiFilters)
                 }
             }
         }
