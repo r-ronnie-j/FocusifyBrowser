@@ -14,8 +14,6 @@ import java.net.URI
 suspend fun getSpinCategory(url: String): List<SpinWebCategory> {
     val uri = URI(url)
     val host = uri.host
-    Log.d("host", "spin : The host of the domain is $host")
-
     val jsonObject = JSONObject().apply {
         put("domainName", host)
         put("key", "oz2erssx768cHfzDMOO1PsyIz2EaJsyDppqrwmHckoHsrGBOJ2tPkA==")
@@ -34,7 +32,11 @@ suspend fun getSpinCategory(url: String): List<SpinWebCategory> {
         client.newCall(request).execute().use { response ->
             val responseString = response.body?.string()
             responseString?.let {
-                parseJsonAndExtractTitles(it)
+                val spinC = parseJsonAndExtractTitles(it)
+                Log.d(
+                    "host", "spin response ${url} ${spinC} ${spinC.size}"
+                )
+                spinC
             } ?: emptyList()
         }
     }

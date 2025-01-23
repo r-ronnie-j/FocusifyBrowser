@@ -3,6 +3,7 @@ package com.example.myapplication.webkit
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -10,6 +11,7 @@ import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.utilities.category.getBlocksiCategory
 import com.example.myapplication.utilities.category.getSpinCategory
+import com.example.myapplication.utilities.giveNonAmpUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +24,10 @@ class AayamWebClient(
     @SuppressLint("QueryPermissionsNeeded")
     override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
         val url = request.url.toString()
+        val testUrl = giveNonAmpUrl(url)
+        Log.d("host", "non amp $testUrl")
         if (url.startsWith("intent://")) {
+            Log.d("host", "url: $url")
             val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
             if (intent != null) {
                 val packageManager = context.packageManager
@@ -31,41 +36,18 @@ class AayamWebClient(
                 }
             }
         } else {
-            view.loadUrl(url)
-            CoroutineScope(Dispatchers.IO).launch {
-                val blocksi = getBlocksiCategory(url)
-                val spin = getSpinCategory(url)
+            CoroutineScope(Dispatchers.Main).launch {
+                val blocksi = getBlocksiCategory(testUrl)
+                val spin = getSpinCategory(testUrl)
                 if (shouldBlock(blocksi, spin)) {
                     val replaceUrl = "file:///android_asset/block/index.html"
-                    view.loadUrl(
-                        "javascript:(function() { " +
-                                "window.location.replace('$replaceUrl'); " +
-                                "})()"
-                    )
+                    view.loadUrl(replaceUrl)
+                } else {
+                    view.loadUrl(url)
                 }
             }
         }
         return true
     }
-
-//    @SuppressLint("QueryPermissionsNeeded")
-//    @Deprecated("Deprecated in Java")
-//    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-//        if (url != null && url.startsWith("intent://")) {
-//            val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
-//            if (intent != null) {
-//                val packageManager = context.packageManager
-//                if (intent.resolveActivity(packageManager) != null) {
-//                    context.startActivity(intent)
-//                    return true
-//                }
-//            }
-//        } else {
-//            url?.let {
-//                view?.loadUrl(url)
-//            }
-//        }
-//        return true
-//    }
-
 }
+

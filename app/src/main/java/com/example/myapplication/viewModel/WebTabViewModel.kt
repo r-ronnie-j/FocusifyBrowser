@@ -1,6 +1,7 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.compositionLocalOf
 import com.example.myapplication.webkit.AayamWebView
 import androidx.compose.runtime.*
@@ -151,6 +152,15 @@ class WebTabViewModel : ViewModel() {
                 }
             },
             shouldBlock = { blocksi, spin ->
+                Log.d(
+                    "host",
+                    "check : $blocksiBlockCategory $spinBlockCategories ${spin} ${blocksi} ${
+                        blocksi.any {
+                            blocksiBlockCategory.contains(it)
+
+                        }
+                    } ${spin.any { spinBlockCategories.contains(it) }}"
+                )
                 return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
                         spin.any { spinBlockCategories.contains(it) }
             }

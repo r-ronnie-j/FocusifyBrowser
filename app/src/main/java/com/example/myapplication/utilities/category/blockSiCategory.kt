@@ -19,8 +19,11 @@ suspend fun getBlocksiCategory(url: String): List<BlocksiCategory> {
     return withContext(Dispatchers.IO) {
         client.newCall(request).execute().use { response ->
             val responseString = response.body?.string()
+
             responseString?.let {
-                listOf(parseJsonAndExtractTitles(it))
+                val x = listOf(parseJsonAndExtractTitles(it))
+                Log.d("host", "blocksi response $url $x")
+                x
             }
             emptyList()
         }

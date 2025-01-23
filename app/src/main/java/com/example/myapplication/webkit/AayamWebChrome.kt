@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -28,6 +29,12 @@ class AayamWebChrome(
             context.requestedOrientation =
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
+    }
+
+
+    override fun onProgressChanged(view: WebView?, newProgress: Int) {
+        Log.d("host", "url : ${view?.url} ${newProgress}")
+        super.onProgressChanged(view, newProgress)
     }
 
     override fun onReceivedTitle(view: WebView?, title: String?) {
