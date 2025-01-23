@@ -17,6 +17,7 @@ import com.example.myapplication.utilities.enums.SearchEngines
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.URL
 import java.net.URLEncoder
 
 class WebTabViewModel : ViewModel() {
@@ -91,13 +92,27 @@ class WebTabViewModel : ViewModel() {
         searchEngine: SearchEngines
     ) {
         val webView = webViewTabs[activeIndex.intValue]
-        val query = URLEncoder.encode(text, "UTF-8")
-        val url = when (searchEngine) {
-            SearchEngines.Google -> "https://www.google.com/search?q=$query"
-            SearchEngines.Duckduckgo -> "https://duckduckgo.com/?q=$query"
-            SearchEngines.Yandex -> "https://yandex.com/search/?text=$query"
-            SearchEngines.Bing -> "https://www.bing.com/search?q=$query"
+
+        val isValidUrl = try {
+            val url = URL(text)
+            url.protocol == "http" || url.protocol == "https"
+        } catch (e: Error) {
+            false
         }
+
+        val url = if (isValidUrl) {
+            text // Navigate directly to the valid URL
+        } else {
+            // Encode and search using the chosen search engine
+            val query = URLEncoder.encode(text, "UTF-8")
+            when (searchEngine) {
+                SearchEngines.Google -> "https://www.google.com/search?q=$query"
+                SearchEngines.Duckduckgo -> "https://duckduckgo.com/?q=$query"
+                SearchEngines.Yandex -> "https://yandex.com/search/?text=$query"
+                SearchEngines.Bing -> "https://www.bing.com/search?q=$query"
+            }
+        }
+
         webView.loadUrl(url)
     }
 
