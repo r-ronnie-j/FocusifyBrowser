@@ -63,7 +63,7 @@ fun TitleBar() {
         if (webviewModel.tabInfo.size > activeIndex.intValue && webviewModel.tabInfo[activeIndex.intValue].progress != 100) {
             IconButton(
                 onClick = {
-                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.reload()
+                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.stopLoading()
                 },
             ) {
                 Icon(
@@ -76,7 +76,7 @@ fun TitleBar() {
         } else {
             IconButton(
                 onClick = {
-                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.stopLoading()
+                    webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.reload()
                 },
             ) {
                 Icon(
