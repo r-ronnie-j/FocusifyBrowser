@@ -19,7 +19,8 @@ class AayamWebView(
     context: Context,
     onTitleReceive: (a: String?) -> Unit,
     onIconReceive: (a: Bitmap) -> Unit,
-    shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean
+    shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean,
+    onProgress: (x: Int) -> Unit
 ) : WebView(context) {
 
     init {
@@ -68,7 +69,8 @@ class AayamWebView(
         webChromeClient = AayamWebChrome(
             context,
             onTitleReceive = onTitleReceive,
-            onIconReceive = onIconReceive
+            onIconReceive = onIconReceive,
+            onProgress = onProgress
         )
     }
 }

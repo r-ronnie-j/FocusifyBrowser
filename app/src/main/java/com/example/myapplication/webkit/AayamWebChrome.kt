@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
@@ -13,7 +12,8 @@ import android.widget.FrameLayout
 class AayamWebChrome(
     private val context: Context,
     private val onTitleReceive: (a: String?) -> Unit,
-    private val onIconReceive: (a: Bitmap) -> Unit
+    private val onIconReceive: (a: Bitmap) -> Unit,
+    private val onProgress: (progress: Int) -> Unit
 ) : WebChromeClient() {
     private var view: View? = null
     override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
@@ -33,7 +33,7 @@ class AayamWebChrome(
 
 
     override fun onProgressChanged(view: WebView?, newProgress: Int) {
-        Log.d("host", "url : ${view?.url} ${newProgress}")
+        onProgress(newProgress)
         super.onProgressChanged(view, newProgress)
     }
 

@@ -22,7 +22,7 @@ class AayamWebClient(
     private val shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean
 ) : WebViewClient() {
 
-    val assetLoader = WebViewAssetLoader.Builder()
+    private val assetLoader = WebViewAssetLoader.Builder()
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .build()
 
@@ -37,9 +37,7 @@ class AayamWebClient(
 
         if (url != null && !url.startsWith("file")) {
             val testUrl = giveNonAmpUrl(url)
-            Log.d("host", "non amp $testUrl")
             if (url.startsWith("intent://")) {
-                Log.d("host", "url: $url")
                 val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
                 if (intent != null) {
                     val packageManager = context.packageManager
@@ -51,6 +49,7 @@ class AayamWebClient(
                 CoroutineScope(Dispatchers.Main).launch {
                     val blocksi = getBlocksiCategory(testUrl)
                     val spin = getSpinCategory(testUrl)
+                    view?.onPause()
                     if (shouldBlock(blocksi, spin)) {
                         val replaceUrl =
                             "https://appassets.androidplatform.net/assets/block/index.html"
@@ -66,7 +65,7 @@ class AayamWebClient(
                             Log.d("WebClient", "Result from JavaScript: $result")
                         }
                     } else {
-//                        super.doUpdateVisitedHistory(view, url, isReload)
+                        view?.onResume()
                     }
                 }
             }

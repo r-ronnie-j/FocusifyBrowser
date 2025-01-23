@@ -1,7 +1,6 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.compositionLocalOf
 import com.example.myapplication.webkit.AayamWebView
 import androidx.compose.runtime.*
@@ -27,8 +26,8 @@ class WebTabViewModel : ViewModel() {
     var tabInfo = mutableStateListOf<TabInfo>()
     var isIncognito by mutableStateOf(false)
 
-    val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
-    val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
+    private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
+    private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
     val webCategoryStatusList = mutableStateListOf<WebCategoryStatus>()
 
     init {
@@ -127,7 +126,8 @@ class WebTabViewModel : ViewModel() {
                         TabInfo(
                             title = it ?: "No title found",
                             incognito = isIncognito,
-                            favIcon = null
+                            favIcon = null,
+                            progress = 0
                         )
                     )
                 } else if (index < tabInfo.size) {
@@ -142,7 +142,8 @@ class WebTabViewModel : ViewModel() {
                         TabInfo(
                             title = "No title found",
                             incognito = isIncognito,
-                            favIcon = it
+                            favIcon = it,
+                            progress = 0
                         )
                     )
                 } else if (index < tabInfo.size) {
@@ -151,16 +152,23 @@ class WebTabViewModel : ViewModel() {
                     )
                 }
             },
+            onProgress = {
+                if (index == tabInfo.size) {
+                    tabInfo.add(
+                        TabInfo(
+                            title = "Loading...",
+                            incognito = isIncognito,
+                            favIcon = null,
+                            progress = it
+                        )
+                    )
+                } else if (index < tabInfo.size) {
+                    tabInfo[index] = tabInfo[index].copy(
+                        progress = it
+                    )
+                }
+            },
             shouldBlock = { blocksi, spin ->
-                Log.d(
-                    "host",
-                    "check : $blocksiBlockCategory $spinBlockCategories ${spin} ${blocksi} ${
-                        blocksi.any {
-                            blocksiBlockCategory.contains(it)
-
-                        }
-                    } ${spin.any { spinBlockCategories.contains(it) }}"
-                )
                 return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
                         spin.any { spinBlockCategories.contains(it) }
             }
