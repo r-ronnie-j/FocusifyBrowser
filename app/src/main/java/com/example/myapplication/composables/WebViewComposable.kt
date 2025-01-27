@@ -48,12 +48,14 @@ fun WebViewComposable() {
             )?.progress != 100
         ) {
             Row {
-                Box(
-                    modifier = Modifier
-                        .weight(webTabViewModel.tabInfo[activeIndex.intValue].progress.toFloat())
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.primary)
-                )
+                if (webTabViewModel.tabInfo[activeIndex.intValue].progress > 0f) {
+                    Box(
+                        modifier = Modifier
+                            .weight(webTabViewModel.tabInfo[activeIndex.intValue].progress.toFloat())
+                            .height(2.dp)
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .weight(100 - webTabViewModel.tabInfo[activeIndex.intValue].progress.toFloat())

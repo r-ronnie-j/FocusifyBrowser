@@ -34,8 +34,8 @@ class AayamWebClient(
     }
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-
-        if (url != null && !url.startsWith("file")) {
+        super.doUpdateVisitedHistory(view, url, isReload)
+        if (url != null && !url.startsWith("https://appassets.androidplatform.net/assets")) {
             val testUrl = giveNonAmpUrl(url)
             if (url.startsWith("intent://")) {
                 val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
@@ -51,6 +51,7 @@ class AayamWebClient(
                     val spin = getSpinCategory(testUrl)
                     view?.onPause()
                     if (shouldBlock(blocksi, spin)) {
+                        view?.stopLoading()
                         val replaceUrl =
                             "https://appassets.androidplatform.net/assets/block/index.html"
                         view?.evaluateJavascript(
@@ -64,6 +65,7 @@ class AayamWebClient(
                         ) { result ->
                             Log.d("WebClient", "Result from JavaScript: $result")
                         }
+                        view?.onResume()
                     } else {
                         view?.onResume()
                     }
