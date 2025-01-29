@@ -34,9 +34,11 @@ fun WebViewComposable() {
             },
             update = {
                 if (activeIndex.intValue == webTabViewModel.webViewTabs.size) {
-                    val webview = webTabViewModel.createWebView(context)
-                    it.removeAllViews()
-                    it.addView(webview)
+                    if (webTabViewModel.restored) {
+                        val webview = webTabViewModel.createWebView(context)
+                        it.removeAllViews()
+                        it.addView(webview)
+                    }
                 } else {
                     val webview = webTabViewModel.webViewTabs[activeIndex.intValue]
                     it.removeAllViews()

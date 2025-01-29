@@ -36,6 +36,7 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
     var activeIndex = mutableIntStateOf(0)
     var tabInfo = MutableStateFlow<List<TabInfo>>(emptyList())
     var isIncognito by mutableStateOf(false)
+    var restored by mutableStateOf(false)
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
@@ -74,6 +75,7 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
                                 createWebView(context, tab.url)
                             }
                         }
+                        restored = true
                     }
                 }
             }
@@ -118,7 +120,6 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
         if (index == 0 && activeIndex.intValue == 0) activeIndex.intValue = 0
         else if (index <= activeIndex.intValue) activeIndex.intValue--
         webViewTabs.removeAt(index)
-
     }
 
     fun changeStatus(index: Int) {
