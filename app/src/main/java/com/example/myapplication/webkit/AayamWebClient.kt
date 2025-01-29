@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 
 class AayamWebClient(
     private val context: Context,
-    private val shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean
+    private val shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean,
+    private val onUrlChange: (a: String?) -> Unit,
 ) : WebViewClient() {
 
     private val assetLoader = WebViewAssetLoader.Builder()
@@ -35,6 +36,7 @@ class AayamWebClient(
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
         super.doUpdateVisitedHistory(view, url, isReload)
+        onUrlChange(url)
         if (url != null && !url.startsWith("https://appassets.androidplatform.net/assets")) {
             val testUrl = giveNonAmpUrl(url)
             if (url.startsWith("intent://")) {
@@ -73,5 +75,6 @@ class AayamWebClient(
             }
         }
     }
+
 }
 

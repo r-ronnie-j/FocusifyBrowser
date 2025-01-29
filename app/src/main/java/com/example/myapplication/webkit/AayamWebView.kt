@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams
 import android.webkit.URLUtil
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -20,7 +21,8 @@ class AayamWebView(
     onTitleReceive: (a: String?) -> Unit,
     onIconReceive: (a: Bitmap) -> Unit,
     shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean,
-    onProgress: (x: Int) -> Unit
+    onProgress: (x: Int) -> Unit,
+    onUrlChange: (a: String?) -> Unit,
 ) : WebView(context) {
 
     init {
@@ -65,7 +67,7 @@ class AayamWebView(
             downloadManager.enqueue(request)
         }
 
-        webViewClient = AayamWebClient(context, shouldBlock)
+        webViewClient = AayamWebClient(context, shouldBlock, onUrlChange)
         webChromeClient = AayamWebChrome(
             context,
             onTitleReceive = onTitleReceive,

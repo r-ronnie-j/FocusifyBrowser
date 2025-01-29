@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,6 +29,7 @@ import com.example.myapplication.viewModel.LocalWebTabViewModel
 fun TitleBar() {
     val titleBarViewModel = LocalTitleBar.current
     val webviewModel = LocalWebTabViewModel.current
+    val tabInfo = webviewModel.tabInfo.collectAsState()
     val activeIndex = webviewModel.activeIndex
     Row(
         modifier = Modifier
@@ -50,7 +52,7 @@ fun TitleBar() {
             )
         }
         Text(
-            text = webviewModel.tabInfo.getOrNull(activeIndex.intValue)?.title ?: "Homepage",
+            text = tabInfo.value.getOrNull(activeIndex.intValue)?.title ?: "Homepage",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -60,7 +62,7 @@ fun TitleBar() {
                 }
         )
 
-        if (webviewModel.tabInfo.size > activeIndex.intValue && webviewModel.tabInfo[activeIndex.intValue].progress != 100) {
+        if (tabInfo.value.size > activeIndex.intValue && tabInfo.value[activeIndex.intValue].progress != 100) {
             IconButton(
                 onClick = {
                     webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.stopLoading()

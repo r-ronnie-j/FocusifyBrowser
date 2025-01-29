@@ -1,9 +1,13 @@
 package com.example.myapplication.viewModel
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.compositionLocalOf
-import com.example.myapplication.webkit.AayamWebView
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.dataClass.BlocksiCategory
@@ -13,17 +17,24 @@ import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.db
 import com.example.myapplication.database.entity.WebFilterEntity
+import com.example.myapplication.database.tabInfo.WebTabEntity
 import com.example.myapplication.utilities.enums.SearchEngines
+import com.example.myapplication.webkit.AayamWebView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 import java.net.URLEncoder
 
-class WebTabViewModel : ViewModel() {
+const val HOME_URL = "file:///android_asset/home/home.html"
+
+class WebTabViewModel(private val context: Context) : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
     var activeIndex = mutableIntStateOf(0)
-    var tabInfo = mutableStateListOf<TabInfo>()
+    var tabInfo = MutableStateFlow<List<TabInfo>>(emptyList())
     var isIncognito by mutableStateOf(false)
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
@@ -48,14 +59,66 @@ class WebTabViewModel : ViewModel() {
                             blocked = filterStatus.blocked
                         )
                     }
+                    val tabDao = db.webTabDao()
+                    val tabs = tabDao.getAll()
+                    val notIncognitoTabs = tabs.filter { !it.incognito }
+                    tabs.forEach { tabDao.delete(it) }
                     withContext(Dispatchers.Main) {
                         webCategoryStatusList.addAll(category)
                         spinBlockCategories.addAll(spinFilters)
                         blocksiBlockCategory.addAll(blocksiFilters)
+                        notIncognitoTabs.forEach { tab ->
+                            if (tab.url == null) {
+                                createWebView(context)
+                            } else {
+                                createWebView(context, tab.url)
+                            }
+                        }
                     }
                 }
             }
         }
+        viewModelScope.launch {
+            tabInfo.collectLatest {
+                withContext(Dispatchers.IO) {
+                    db?.let { db ->
+                        val tabInfoDao = db.webTabDao()
+                        val tabSize = tabInfoDao.getSize()
+                        it.forEachIndexed { index, tab ->
+                            tabInfoDao.insertOrUpdate(
+                                WebTabEntity(
+                                    title = tab.title,
+                                    favIcon = tab.favIcon,
+                                    id = index,
+                                    url = tab.url,
+                                    incognito = tab.incognito
+                                )
+                            )
+                        }
+                        if (tabSize > it.size) {
+                            for (x in it.size..<tabSize) tabInfoDao.deleteAtIndex(x)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteTabAtIndex(index: Int) {
+        tabInfo.update { list ->
+            if (index in list.indices) {
+                Log.d("tabs", "$index is in list ${list.indices}")
+                list.toMutableList().apply {
+                    removeAt(index)
+                }.toList()
+            } else {
+                list
+            }
+        }
+        if (index == 0 && activeIndex.intValue == 0) activeIndex.intValue = 0
+        else if (index <= activeIndex.intValue) activeIndex.intValue--
+        webViewTabs.removeAt(index)
+
     }
 
     fun changeStatus(index: Int) {
@@ -116,67 +179,100 @@ class WebTabViewModel : ViewModel() {
     }
 
 
-    fun createWebView(context: Context): AayamWebView {
+    fun createWebView(
+        context: Context,
+        url: String = HOME_URL
+    ): AayamWebView {
         val index = webViewTabs.size
         val webView = AayamWebView(
             context = context,
-            onTitleReceive = {
-                if (index == tabInfo.size) {
-                    tabInfo.add(
-                        TabInfo(
-                            title = it ?: "No title found",
-                            incognito = isIncognito,
-                            favIcon = null,
-                            progress = 0
+            onTitleReceive = { title ->
+                tabInfo.update { list ->
+                    val newList = list.toMutableList()
+                    if (index >= newList.size) {
+                        newList.add(
+                            TabInfo(
+                                title = title ?: "No title found",
+                                incognito = isIncognito,
+                                favIcon = null,
+                                progress = 0,
+                                url = null
+                            )
                         )
-                    )
-                } else if (index < tabInfo.size) {
-                    tabInfo[index] = tabInfo[index].copy(
-                        title = it ?: "No title found"
-                    )
+                    } else {
+                        newList[index] = newList[index].copy(title = title ?: "No title found")
+                    }
+                    newList
                 }
             },
-            onIconReceive = {
-                if (index == tabInfo.size) {
-                    tabInfo.add(
-                        TabInfo(
-                            title = "No title found",
-                            incognito = isIncognito,
-                            favIcon = it,
-                            progress = 0
+            onIconReceive = { icon ->
+                tabInfo.update { list ->
+                    val newList = list.toMutableList()
+                    if (index >= newList.size) {
+                        newList.add(
+                            TabInfo(
+                                title = "No title found",
+                                incognito = isIncognito,
+                                favIcon = icon,
+                                progress = 0,
+                                url = null
+                            )
                         )
-                    )
-                } else if (index < tabInfo.size) {
-                    tabInfo[index] = tabInfo[index].copy(
-                        favIcon = it
-                    )
+                    } else {
+                        newList[index] = newList[index].copy(favIcon = icon)
+                    }
+                    newList
                 }
             },
-            onProgress = {
-                if (index == tabInfo.size) {
-                    tabInfo.add(
-                        TabInfo(
-                            title = "Loading...",
-                            incognito = isIncognito,
-                            favIcon = null,
-                            progress = it
+            onProgress = { progress ->
+                tabInfo.update { list ->
+                    val newList = list.toMutableList()
+                    if (index >= newList.size) {
+                        newList.add(
+                            TabInfo(
+                                title = "Loading...",
+                                incognito = isIncognito,
+                                favIcon = null,
+                                progress = progress,
+                                url = null
+                            )
                         )
-                    )
-                } else if (index < tabInfo.size) {
-                    tabInfo[index] = tabInfo[index].copy(
-                        progress = it
-                    )
+                    } else {
+                        newList[index] = newList[index].copy(progress = progress)
+                    }
+                    newList
                 }
             },
             shouldBlock = { blocksi, spin ->
                 return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
                         spin.any { spinBlockCategories.contains(it) }
+            },
+            onUrlChange = { loadedUrl ->
+                tabInfo.update { list ->
+                    val newList = list.toMutableList()
+                    if (index >= newList.size) {
+                        newList.add(
+                            TabInfo(
+                                title = "Loading...",
+                                incognito = isIncognito,
+                                favIcon = null,
+                                progress = 0,
+                                url = loadedUrl
+                            )
+                        )
+                    } else {
+                        newList[index] = newList[index].copy(url = loadedUrl)
+                    }
+                    newList
+                }
             }
         )
-        webView.loadUrl("file:///android_asset/home/home.html")
-        webViewTabs.add(index, webView)
+        webView.loadUrl(url)
+        webViewTabs.add(webView)
         return webView
     }
 }
 
-val LocalWebTabViewModel = compositionLocalOf { WebTabViewModel() }
+val LocalWebTabViewModel = compositionLocalOf<WebTabViewModel> {
+    error("Web tab view model must be provided")
+}

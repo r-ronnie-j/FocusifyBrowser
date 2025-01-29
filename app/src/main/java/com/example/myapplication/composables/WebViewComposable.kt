@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ fun WebViewComposable() {
     val webTabViewModel = LocalWebTabViewModel.current
     val activeIndex = webTabViewModel.activeIndex
     val context = LocalContext.current
+    val tabInfo = webTabViewModel.tabInfo.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -43,22 +45,22 @@ fun WebViewComposable() {
             },
             modifier = Modifier.fillMaxSize(),
         )
-        if (webTabViewModel.tabInfo.size > activeIndex.value && webTabViewModel.tabInfo.getOrNull(
+        if (tabInfo.value.size > activeIndex.intValue && tabInfo.value.getOrNull(
                 activeIndex.intValue
             )?.progress != 100
         ) {
             Row {
-                if (webTabViewModel.tabInfo[activeIndex.intValue].progress > 0f) {
+                if (tabInfo.value[activeIndex.intValue].progress > 0f) {
                     Box(
                         modifier = Modifier
-                            .weight(webTabViewModel.tabInfo[activeIndex.intValue].progress.toFloat())
+                            .weight(tabInfo.value[activeIndex.intValue].progress.toFloat())
                             .height(2.dp)
                             .background(MaterialTheme.colorScheme.primary)
                     )
                 }
                 Box(
                     modifier = Modifier
-                        .weight(100 - webTabViewModel.tabInfo[activeIndex.intValue].progress.toFloat())
+                        .weight(100 - tabInfo.value[activeIndex.intValue].progress.toFloat())
                         .height(2.dp)
                         .background(MaterialTheme.colorScheme.tertiary)
                 )
