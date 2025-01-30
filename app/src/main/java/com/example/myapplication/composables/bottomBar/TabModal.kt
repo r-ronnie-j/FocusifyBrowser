@@ -19,20 +19,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.dataClass.TabInfo
 import com.example.myapplication.viewModel.LocalWebTabViewModel
@@ -83,26 +81,15 @@ fun IndividualTab(
     index: Int,
 ) {
     val webviewModel = LocalWebTabViewModel.current
-    val context = LocalContext.current
-    val dismissState = SwipeToDismissBoxState(
-        initialValue = SwipeToDismissBoxValue.Settled,
-        density = Density(context),
-        confirmValueChange = {
-            if (it == SwipeToDismissBoxValue.StartToEnd) {
-                webviewModel.deleteTabAtIndex(index)
-                true
-            } else {
-                false
-            }
-        },
-        positionalThreshold = {
-            it
-        }
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { it == SwipeToDismissBoxValue.EndToStart }
+        
     )
-
 
     SwipeToDismissBox(
         state = dismissState,
+        enableDismissFromEndToStart = false,
+        enableDismissFromStartToEnd = true,
         backgroundContent = { },
         content = {
             Row(
@@ -134,7 +121,7 @@ fun IndividualTab(
                     )
                 }
                 Text(
-                    text = "$index)) ${tab.title}",
+                    text = tab.title,
                     maxLines = 1,
                     style = MaterialTheme.typography.bodyMedium,
                     overflow = TextOverflow.Ellipsis,
@@ -158,7 +145,6 @@ fun IndividualTab(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
-
             }
         }
     )
