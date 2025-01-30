@@ -23,58 +23,56 @@ fun WebViewComposable() {
     val activeIndex = webTabViewModel.activeIndex
     val context = LocalContext.current
     val tabInfo = webTabViewModel.tabInfo.collectAsState()
+    if (!webTabViewModel.restored) webTabViewModel.restore(context)
+    else {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        AndroidView(
-            factory = {
-                FrameLayout(it)
-            },
-            update = {
-                if (activeIndex.intValue == webTabViewModel.webViewTabs.size) {
-                    if (webTabViewModel.restored) {
-                        val webview = webTabViewModel.createWebView(context)
+            AndroidView(
+                factory = {
+                    FrameLayout(it)
+                },
+                update = {
+                    if (activeIndex.intValue == webTabViewModel.webViewTabs.size) {
+                        if (webTabViewModel.restored) {
+                            val webview = webTabViewModel.createWebView(context)
+                            it.removeAllViews()
+                            it.addView(webview)
+                        }
+                    } else {
+                        val webview = webTabViewModel.webViewTabs[activeIndex.intValue]
                         it.removeAllViews()
                         it.addView(webview)
                     }
-                } else {
-                    val webview = webTabViewModel.webViewTabs[activeIndex.intValue]
-                    it.removeAllViews()
-                    it.addView(webview)
-                }
-            },
-            modifier = Modifier.fillMaxSize(),
-        )
-        if (tabInfo.value.size > activeIndex.intValue && tabInfo.value.getOrNull(
-                activeIndex.intValue
-            )?.progress != 100
-        ) {
-            Row {
-                if (tabInfo.value[activeIndex.intValue].progress > 0f) {
+                },
+                modifier = Modifier.fillMaxSize(),
+            )
+            if (tabInfo.value.size > activeIndex.intValue && tabInfo.value.getOrNull(
+                    activeIndex.intValue
+                )?.progress != 100
+            ) {
+                Row {
+                    if (tabInfo.value[activeIndex.intValue].progress > 0f) {
+                        Box(
+                            modifier = Modifier
+                                .weight(tabInfo.value[activeIndex.intValue].progress.toFloat())
+                                .height(2.dp)
+                                .background(MaterialTheme.colorScheme.primary)
+                        )
+                    }
                     Box(
                         modifier = Modifier
-                            .weight(tabInfo.value[activeIndex.intValue].progress.toFloat())
+                            .weight(100 - tabInfo.value[activeIndex.intValue].progress.toFloat())
                             .height(2.dp)
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(MaterialTheme.colorScheme.tertiary)
                     )
                 }
-                Box(
-                    modifier = Modifier
-                        .weight(100 - tabInfo.value[activeIndex.intValue].progress.toFloat())
-                        .height(2.dp)
-                        .background(MaterialTheme.colorScheme.tertiary)
-                )
             }
         }
+
+        BackHandler {
+            webTabViewModel.webViewTabs.elementAtOrNull(activeIndex.intValue)?.goBack()
+        }
     }
-
-
-
-
-    BackHandler {
-        webTabViewModel.webViewTabs.elementAtOrNull(activeIndex.intValue)?.goBack()
-    }
-
 }

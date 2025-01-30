@@ -18,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,8 +26,6 @@ import com.example.myapplication.navigation.MainNavigation
 import com.example.myapplication.routes.FilterPage
 import com.example.myapplication.routes.HomePage
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import com.example.myapplication.viewModel.LocalWebTabViewModel
-import com.example.myapplication.viewModel.WebTabViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,11 +38,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val context = LocalContext.current
-            CompositionLocalProvider(LocalWebTabViewModel provides WebTabViewModel(context)) {
-                MyApplicationTheme {
-                    StartComposable()
-                }
+            MyApplicationTheme {
+                StartComposable()
             }
         }
     }

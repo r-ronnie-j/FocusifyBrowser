@@ -31,7 +31,7 @@ import java.net.URLEncoder
 
 const val HOME_URL = "file:///android_asset/home/home.html"
 
-class WebTabViewModel(private val context: Context) : ViewModel() {
+class WebTabViewModel() : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
     var activeIndex = mutableIntStateOf(0)
     var tabInfo = MutableStateFlow<List<TabInfo>>(emptyList())
@@ -60,14 +60,46 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
                             blocked = filterStatus.blocked
                         )
                     }
+                }
+            }
+        }
+        viewModelScope.launch {
+            tabInfo.collectLatest {
+                withContext(Dispatchers.IO) {
+                    if (restored) {
+                        db?.let { db ->
+                            val tabInfoDao = db.webTabDao()
+                            val tabSize = tabInfoDao.getSize()
+                            it.forEachIndexed { index, tab ->
+                                tabInfoDao.insertOrUpdate(
+                                    WebTabEntity(
+                                        title = tab.title,
+                                        favIcon = tab.favIcon,
+                                        id = index,
+                                        url = tab.url,
+                                        incognito = tab.incognito
+                                    )
+                                )
+                            }
+                            if (tabSize > it.size) {
+                                for (x in it.size..<tabSize) tabInfoDao.deleteAtIndex(x)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun restore(context: Context) {
+        db?.let { db ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
                     val tabDao = db.webTabDao()
                     val tabs = tabDao.getAll()
                     val notIncognitoTabs = tabs.filter { !it.incognito }
                     tabs.forEach { tabDao.delete(it) }
                     withContext(Dispatchers.Main) {
-                        webCategoryStatusList.addAll(category)
-                        spinBlockCategories.addAll(spinFilters)
-                        blocksiBlockCategory.addAll(blocksiFilters)
                         notIncognitoTabs.forEach { tab ->
                             if (tab.url == null) {
                                 createWebView(context)
@@ -76,30 +108,6 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
                             }
                         }
                         restored = true
-                    }
-                }
-            }
-        }
-        viewModelScope.launch {
-            tabInfo.collectLatest {
-                withContext(Dispatchers.IO) {
-                    db?.let { db ->
-                        val tabInfoDao = db.webTabDao()
-                        val tabSize = tabInfoDao.getSize()
-                        it.forEachIndexed { index, tab ->
-                            tabInfoDao.insertOrUpdate(
-                                WebTabEntity(
-                                    title = tab.title,
-                                    favIcon = tab.favIcon,
-                                    id = index,
-                                    url = tab.url,
-                                    incognito = tab.incognito
-                                )
-                            )
-                        }
-                        if (tabSize > it.size) {
-                            for (x in it.size..<tabSize) tabInfoDao.deleteAtIndex(x)
-                        }
                     }
                 }
             }
@@ -274,6 +282,4 @@ class WebTabViewModel(private val context: Context) : ViewModel() {
     }
 }
 
-val LocalWebTabViewModel = compositionLocalOf<WebTabViewModel> {
-    error("Web tab view model must be provided")
-}
+val LocalWebTabViewModel = compositionLocalOf { WebTabViewModel() }
