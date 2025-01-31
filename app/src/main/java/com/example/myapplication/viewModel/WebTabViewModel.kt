@@ -60,6 +60,11 @@ class WebTabViewModel() : ViewModel() {
                             blocked = filterStatus.blocked
                         )
                     }
+                    withContext(Dispatchers.Main) {
+                        webCategoryStatusList.addAll(category)
+                        spinBlockCategories.addAll(spinFilters)
+                        blocksiBlockCategory.addAll(blocksiFilters)
+                    }
                 }
             }
         }
