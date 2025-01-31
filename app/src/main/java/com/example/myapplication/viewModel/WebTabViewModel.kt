@@ -18,6 +18,7 @@ import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.db
 import com.example.myapplication.database.entity.WebFilterEntity
 import com.example.myapplication.database.tabInfo.WebTabEntity
+import com.example.myapplication.utilities.Home_Url
 import com.example.myapplication.utilities.enums.SearchEngines
 import com.example.myapplication.webkit.AayamWebView
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +30,6 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 import java.net.URLEncoder
 
-const val HOME_URL = "file:///android_asset/home/home.html"
 
 class WebTabViewModel() : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
@@ -195,7 +195,7 @@ class WebTabViewModel() : ViewModel() {
 
     fun createWebView(
         context: Context,
-        url: String = HOME_URL
+        url: String = Home_Url
     ): AayamWebView {
         val index = webViewTabs.size
         val webView = AayamWebView(
