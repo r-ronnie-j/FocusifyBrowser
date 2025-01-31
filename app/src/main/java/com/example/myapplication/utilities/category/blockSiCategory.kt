@@ -14,15 +14,12 @@ suspend fun getBlocksiCategory(url: String): List<BlocksiCategory> {
     val request = Request.Builder()
         .url("http://service2.block.si/getRating.json?url=$host")
         .build()
-
+    Log.d("here", "error is here")
     return withContext(Dispatchers.IO) {
         client.newCall(request).execute().use { response ->
             val responseString = response.body?.string()
-
-            Log.d("host", "blocksi : The host of the domain is $host")
             responseString?.let {
                 val x = parseJsonAndExtractTitles(it)
-                Log.d("host", "blocksi response $url $x")
                 return@withContext if (x == null) emptyList() else listOf(x)
             }
             emptyList()

@@ -2,7 +2,7 @@ package com.example.myapplication.webkit
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -27,6 +27,14 @@ class AayamWebClient(
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .build()
 
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+        super.onReceivedError(view, request, error)
+    }
+
     override fun shouldInterceptRequest(
         view: WebView,
         request: WebResourceRequest
@@ -49,32 +57,31 @@ class AayamWebClient(
                 }
             } else {
                 CoroutineScope(Dispatchers.Main).launch {
-                    val blocksi = getBlocksiCategory(testUrl)
-                    val spin = getSpinCategory(testUrl)
-                    view?.onPause()
-                    if (shouldBlock(blocksi, spin)) {
-                        view?.stopLoading()
-                        val replaceUrl =
-                            "https://appassets.androidplatform.net/assets/block/index.html"
-                        view?.evaluateJavascript(
-                            """
+                    try {
+                        val blocksi = getBlocksiCategory(testUrl)
+                        val spin = getSpinCategory(testUrl)
+                        view?.onPause()
+                        if (shouldBlock(blocksi, spin)) {
+                            view?.stopLoading()
+                            val replaceUrl =
+                                "https://appassets.androidplatform.net/assets/block/index.html"
+                            view?.evaluateJavascript(
+                                """
                             (function() { 
                                 console.log('Replacing URL...');
                                 window.location.replace('$replaceUrl'); 
                                 return "done"
                             })();
                             """
-                        ) { result ->
-                            Log.d("WebClient", "Result from JavaScript: $result")
+                            ) { }
                         }
                         view?.onResume()
-                    } else {
+                    } catch (e: Exception) {
                         view?.onResume()
                     }
                 }
             }
         }
     }
-
 }
 
