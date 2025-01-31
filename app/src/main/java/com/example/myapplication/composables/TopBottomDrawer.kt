@@ -73,7 +73,7 @@ fun TopBottomDrawer() {
                 .fillMaxSize()
                 .background(
                     if (showTop || showBottom) MaterialTheme.colorScheme.surfaceContainer.copy(
-                        alpha = 0.8f
+                        alpha = 0.5f
                     ) else Color.Transparent
                 )
                 .pointerInput(Unit) {

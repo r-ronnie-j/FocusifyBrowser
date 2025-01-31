@@ -5,7 +5,9 @@ import androidx.navigation.NavController
 
 enum class MainNavigation {
     HomePage,
-    FilterPage
+    FilterPage,
+    HistoryPage,
+    BookmarkPage,
 }
 
 val LocalMainNavigationProvider = compositionLocalOf<NavController> {

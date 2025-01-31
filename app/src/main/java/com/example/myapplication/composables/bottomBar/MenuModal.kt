@@ -63,11 +63,17 @@ fun MenuModal() {
     val context = LocalContext.current
 
     val menuItems = listOf(
-        MenuItem("History", IconImage.ImageVectorIcon(Lucide.History), onClick = {}, false),
+        MenuItem("History", IconImage.ImageVectorIcon(Lucide.History), onClick = {
+            titleViewModel.showMenu = false
+            mainNavigator.navigate(MainNavigation.HistoryPage.name)
+        }, false),
         MenuItem(
             "Bookmarks",
             IconImage.ImageVectorIcon(Lucide.Bookmark),
-            onClick = {}, false
+            onClick = {
+                titleViewModel.showMenu = false
+                mainNavigator.navigate(MainNavigation.BookmarkPage.name)
+            }, false
         ),
         MenuItem(
             "Incognito",

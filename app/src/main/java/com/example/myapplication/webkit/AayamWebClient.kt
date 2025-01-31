@@ -2,7 +2,6 @@ package com.example.myapplication.webkit
 
 import android.content.Context
 import android.content.Intent
-import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -26,14 +25,6 @@ class AayamWebClient(
     private val assetLoader = WebViewAssetLoader.Builder()
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .build()
-
-    override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?
-    ) {
-        super.onReceivedError(view, request, error)
-    }
 
     override fun shouldInterceptRequest(
         view: WebView,

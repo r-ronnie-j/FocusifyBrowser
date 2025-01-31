@@ -26,7 +26,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.navigation.LocalMainNavigationProvider
 import com.example.myapplication.navigation.MainNavigation
+import com.example.myapplication.routes.BookmarkPage
 import com.example.myapplication.routes.FilterPage
+import com.example.myapplication.routes.HistoryPage
 import com.example.myapplication.routes.HomePage
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.example.myapplication.viewModel.LocalWebTabViewModel
@@ -85,6 +87,12 @@ fun StartComposable() {
                     }
                     composable(route = MainNavigation.FilterPage.name) {
                         FilterPage()
+                    }
+                    composable(route = MainNavigation.HistoryPage.name) {
+                        HistoryPage()
+                    }
+                    composable(route = MainNavigation.BookmarkPage.name) {
+                        BookmarkPage()
                     }
                 }
             }

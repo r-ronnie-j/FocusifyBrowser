@@ -88,6 +88,7 @@ fun BottomNavBar() {
             BouncingBox(
                 onClick = {
                     titleBarViewModel.showTabs = !titleBarViewModel.showTabs
+                    titleBarViewModel.showMenu = false
                 }
             ) {
                 Icon(
@@ -104,6 +105,7 @@ fun BottomNavBar() {
             }
             IconButton(onClick = {
                 titleBarViewModel.showMenu = !titleBarViewModel.showMenu
+                titleBarViewModel.showTabs = false
             }) {
                 Icon(
                     imageVector = Octicons.ThreeBars16,

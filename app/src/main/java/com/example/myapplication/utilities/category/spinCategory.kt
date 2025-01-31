@@ -1,6 +1,5 @@
 package com.example.myapplication.utilities.category
 
-import android.util.Log
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.utilities.client
 import kotlinx.coroutines.Dispatchers
@@ -33,9 +32,6 @@ suspend fun getSpinCategory(url: String): List<SpinWebCategory> {
             val responseString = response.body?.string()
             responseString?.let {
                 val spinC = parseJsonAndExtractTitles(it)
-                Log.d(
-                    "host", "spin response ${url} ${spinC} ${spinC.size}"
-                )
                 spinC
             } ?: emptyList()
         }

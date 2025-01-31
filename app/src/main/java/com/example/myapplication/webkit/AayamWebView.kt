@@ -19,7 +19,7 @@ import com.example.myapplication.dataClass.SpinWebCategory
 class AayamWebView(
     context: Context,
     onTitleReceive: (a: String?) -> Unit,
-    onIconReceive: (a: Bitmap) -> Unit,
+    onIconReceive: (a: Bitmap?) -> Unit,
     shouldBlock: (blocksi: List<BlocksiCategory>, spin: List<SpinWebCategory>) -> Boolean,
     onProgress: (x: Int) -> Unit,
     onUrlChange: (a: String?) -> Unit,

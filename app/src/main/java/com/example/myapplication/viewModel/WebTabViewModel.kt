@@ -17,6 +17,7 @@ import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.WebFilterEntity
 import com.example.myapplication.database.db
+import com.example.myapplication.database.history.HistoryEntity
 import com.example.myapplication.database.tabInfo.WebTabEntity
 import com.example.myapplication.utilities.Home_Url
 import com.example.myapplication.utilities.enums.SearchEngines
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 import java.net.URLEncoder
+import java.util.Date
 
 
 class WebTabViewModel() : ViewModel() {
@@ -37,6 +39,7 @@ class WebTabViewModel() : ViewModel() {
     var tabInfo = MutableStateFlow<List<TabInfo>>(emptyList())
     var isIncognito by mutableStateOf(false)
     var restored by mutableStateOf(false)
+    var history = mutableStateListOf<HistoryEntity>()
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
@@ -60,10 +63,12 @@ class WebTabViewModel() : ViewModel() {
                             blocked = filterStatus.blocked
                         )
                     }
+                    val allHistory = db.historyDao().getAll()
                     withContext(Dispatchers.Main) {
                         webCategoryStatusList.addAll(category)
                         spinBlockCategories.addAll(spinFilters)
                         blocksiBlockCategory.addAll(blocksiFilters)
+                        history.addAll(allHistory)
                     }
                 }
             }
@@ -90,6 +95,32 @@ class WebTabViewModel() : ViewModel() {
                                 for (x in it.size..<tabSize) tabInfoDao.deleteAtIndex(x)
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addHistory(h: HistoryEntity) {
+        history.add(h)
+        db?.let { db ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val historyDow = db.historyDao()
+                    historyDow.add(h)
+                }
+            }
+        }
+    }
+
+    fun deleteHistoryById(id: Int) {
+        val h = history.removeIf { it.id == id }
+        if (h) {
+            db?.let { db ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val historyDao = db.historyDao()
+                        historyDao.delete(id)
                     }
                 }
             }
@@ -221,6 +252,21 @@ class WebTabViewModel() : ViewModel() {
             },
             onIconReceive = { icon ->
                 tabInfo.update { list ->
+                    try {
+                        val history = this.webViewTabs[index].copyBackForwardList()
+                        val currentItem = history.currentItem
+                        if (currentItem != null) {
+                            addHistory(
+                                HistoryEntity(
+                                    url = currentItem.url,
+                                    title = currentItem.title,
+                                    favIcon = currentItem.favicon,
+                                    time = Date(),
+                                )
+                            )
+                        }
+                    } catch (_: Exception) {
+                    }
                     val newList = list.toMutableList()
                     if (index >= newList.size) {
                         newList.add(
@@ -257,10 +303,6 @@ class WebTabViewModel() : ViewModel() {
                     newList
                 }
             },
-            shouldBlock = { blocksi, spin ->
-                return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
-                        spin.any { spinBlockCategories.contains(it) }
-            },
             onUrlChange = { loadedUrl ->
                 tabInfo.update { list ->
                     val newList = list.toMutableList()
@@ -279,8 +321,13 @@ class WebTabViewModel() : ViewModel() {
                     }
                     newList
                 }
-            }
+            },
+            shouldBlock = { blocksi, spin ->
+                return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
+                        spin.any { spinBlockCategories.contains(it) }
+            },
         )
+
         webView.loadUrl(url)
         webViewTabs.add(webView)
         return webView
