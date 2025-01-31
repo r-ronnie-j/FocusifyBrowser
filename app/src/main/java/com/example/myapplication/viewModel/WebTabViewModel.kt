@@ -15,8 +15,8 @@ import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.dataClass.TabInfo
 import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.dataClass.categoryList
+import com.example.myapplication.database.WebFilterEntity
 import com.example.myapplication.database.db
-import com.example.myapplication.database.entity.WebFilterEntity
 import com.example.myapplication.database.tabInfo.WebTabEntity
 import com.example.myapplication.utilities.Home_Url
 import com.example.myapplication.utilities.enums.SearchEngines

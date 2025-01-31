@@ -1,4 +1,4 @@
-package com.example.myapplication.database.webCategory
+package com.example.myapplication.database
 
 import androidx.room.Dao
 import androidx.room.Insert
