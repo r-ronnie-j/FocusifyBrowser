@@ -1,5 +1,6 @@
 package com.example.myapplication.composables.webLIst
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,12 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.viewModel.LocalHistoryViewModel
+import com.example.myapplication.viewModel.LocalWebTabViewModel
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HistoryOptions() {
+    val webviewModel = LocalWebTabViewModel.current
+    val historyModel = LocalHistoryViewModel.current
+
     Column {
         Spacer(modifier = Modifier.height(3.dp))
         HorizontalDivider()
@@ -36,14 +40,24 @@ fun HistoryOptions() {
                 text = "Edit",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable { historyModel.isEdit = !historyModel.isEdit }
             )
             Spacer(modifier = Modifier.width(30.dp))
             Text(
-                text = "Delete All",
+                text = if (historyModel.isEdit) "Delete" else "Delete All",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    if (historyModel.isEdit) {
+                        historyModel.deleteHistory.forEach {
+                            webviewModel.deleteHistoryById(it)
+                        }
+                    } else {
+                        webviewModel.clearHistory()
+                    }
+                }
             )
         }
     }

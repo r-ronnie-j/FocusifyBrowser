@@ -108,12 +108,14 @@ class WebTabViewModel() : ViewModel() {
     private fun addHistory(h: HistoryEntity) {
         Log.d("history", "check restored $restored")
         if (restored) {
-            history.add(h)
             db?.let { db ->
                 viewModelScope.launch {
                     withContext(Dispatchers.IO) {
                         val historyDow = db.historyDao()
-                        historyDow.add(h)
+                        val m = historyDow.add(h)
+                        withContext(Dispatchers.Main) {
+                            history.add(h.copy(id = m.toInt()))
+                        }
                     }
                 }
             }
@@ -121,6 +123,7 @@ class WebTabViewModel() : ViewModel() {
     }
 
     fun deleteHistoryById(id: Int) {
+        Log.d("history", "delete has been called $id")
         val h = history.removeIf { it.id == id }
         if (h) {
             db?.let { db ->
@@ -131,6 +134,14 @@ class WebTabViewModel() : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun clearHistory() {
+        webViewTabs.forEach { it.clearHistory() }
+        db?.let { db ->
+            val historyDao = db.historyDao()
+            historyDao.clearAll()
         }
     }
 
@@ -297,6 +308,7 @@ class WebTabViewModel() : ViewModel() {
                                     title = currentItem.title,
                                     favIcon = currentItem.favicon,
                                     time = Date(),
+                                    id = null
                                 )
                             )
                         }

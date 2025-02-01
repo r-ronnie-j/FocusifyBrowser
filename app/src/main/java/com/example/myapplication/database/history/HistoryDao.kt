@@ -16,5 +16,5 @@ interface HistoryDao {
     fun delete(id: Int)
 
     @Insert()
-    fun add(history: HistoryEntity)
+    fun add(history: HistoryEntity): Long
 }

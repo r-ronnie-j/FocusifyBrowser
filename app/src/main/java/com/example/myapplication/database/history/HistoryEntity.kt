@@ -12,7 +12,7 @@ import java.util.Date
 @Entity(tableName = "History")
 @TypeConverters(DateConverter::class, BitmapConverter::class)
 data class HistoryEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "url") val url: String,
     @ColumnInfo(name = "time") val time: Date,
