@@ -12,6 +12,9 @@ interface BookmarkDao {
     @Query("DELETE from Bookmarks WHERE id= :id")
     fun delete(id: Int)
 
+    @Query("DELETE from Bookmarks WHERE url=:url")
+    fun deleteUrl(url: String)
+
     @Insert()
     fun insert(bookmark: BookmarkEntity)
 }

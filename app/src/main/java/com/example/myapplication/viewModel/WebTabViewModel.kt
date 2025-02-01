@@ -171,6 +171,20 @@ class WebTabViewModel() : ViewModel() {
         }
     }
 
+    fun deleteBookmarkByUrl(url: String) {
+        val b = bookmarks.removeIf { it.url == url }
+        if (b) {
+            db?.let { db ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val bookmarkDao = db.bookmarkDao()
+                        bookmarkDao.deleteUrl(url)
+                    }
+                }
+            }
+        }
+    }
+
     fun restore(context: Context) {
         db?.let { db ->
             viewModelScope.launch {

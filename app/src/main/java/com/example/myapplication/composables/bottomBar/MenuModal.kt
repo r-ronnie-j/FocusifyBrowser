@@ -1,4 +1,5 @@
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -33,13 +34,16 @@ import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Printer
 import com.example.myapplication.R
+import com.example.myapplication.database.bookmark.BookmarkEntity
 import com.example.myapplication.navigation.LocalMainNavigationProvider
 import com.example.myapplication.navigation.MainNavigation
+import com.example.myapplication.utilities.Home_Url
 import com.example.myapplication.viewModel.LocalTitleBar
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import compose.icons.Octicons
 import compose.icons.octicons.DeviceDesktop24
 import compose.icons.octicons.ShareAndroid24
+import java.util.Date
 
 sealed class IconImage {
     class ImageVectorIcon(val imageVector: ImageVector) : IconImage()
@@ -83,7 +87,30 @@ fun MenuModal() {
             }, webViewModel.isIncognito
         ),
         MenuItem(
-            "Add Bookmark", IconImage.ImageVectorIcon(Lucide.BookmarkPlus), onClick = {}, false
+            "Add Bookmark", IconImage.ImageVectorIcon(Lucide.BookmarkPlus), onClick = {
+                val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
+                if (webview.url == Home_Url) {
+                    Toast.makeText(context, "Home Page should not be bookmarked", Toast.LENGTH_LONG)
+                        .show()
+                } else {
+                    if (webViewModel.bookmarks.any { it.url == webview.url }) {
+                        webViewModel.deleteBookmarkByUrl(webview.url!!)
+                    } else {
+                        webViewModel.addBookmark(
+                            BookmarkEntity(
+                                id = null,
+                                title = webview.title,
+                                url = webview.url,
+                                favIcon = webview.favicon,
+                                time = Date()
+                            )
+                        )
+                    }
+                }
+            }, webViewModel.bookmarks.any {
+                val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
+                it.url == webview.url
+            }
         ),
         MenuItem("Downloads", IconImage.ImageVectorIcon(Lucide.Download), onClick = {}, false),
         MenuItem("Print Page", IconImage.ImageVectorIcon(Lucide.Printer), onClick = {}, false),
