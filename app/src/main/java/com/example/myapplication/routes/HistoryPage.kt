@@ -24,7 +24,7 @@ import com.example.myapplication.composables.webLIst.WebInfoType
 import com.example.myapplication.composables.widgets.TopBar
 import com.example.myapplication.database.history.HistoryEntity
 import com.example.myapplication.navigation.LocalMainNavigationProvider
-import com.example.myapplication.viewModel.LocalHistoryViewModel
+import com.example.myapplication.viewModel.LocalHistoryBookmark
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import java.util.Calendar
 
@@ -33,7 +33,7 @@ import java.util.Calendar
 fun HistoryPage() {
     val webviewModel = LocalWebTabViewModel.current
     val mainNavController = LocalMainNavigationProvider.current
-    val historyViewModel = LocalHistoryViewModel.current
+    val historyViewModel = LocalHistoryBookmark.current
     val historyItems = webviewModel.history
 
     val groupedHistory = remember(historyItems.size) {

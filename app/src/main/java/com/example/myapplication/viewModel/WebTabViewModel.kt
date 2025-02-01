@@ -146,12 +146,14 @@ class WebTabViewModel() : ViewModel() {
     }
 
     fun addBookmark(b: BookmarkEntity) {
-        bookmarks.add(b)
         db?.let { db ->
             viewModelScope.launch {
                 withContext(Dispatchers.IO) {
                     val bookmarkDao = db.bookmarkDao()
-                    bookmarkDao.insert(b)
+                    val m = bookmarkDao.insert(b)
+                    withContext(Dispatchers.Main) {
+                        bookmarks.add(b.copy(id = m.toInt()))
+                    }
                 }
             }
         }

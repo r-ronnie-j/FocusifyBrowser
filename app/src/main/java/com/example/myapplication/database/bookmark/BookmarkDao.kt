@@ -16,5 +16,5 @@ interface BookmarkDao {
     fun deleteUrl(url: String)
 
     @Insert()
-    fun insert(bookmark: BookmarkEntity)
+    fun insert(bookmark: BookmarkEntity): Long
 }

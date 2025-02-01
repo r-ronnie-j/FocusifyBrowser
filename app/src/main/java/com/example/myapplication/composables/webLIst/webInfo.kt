@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.viewModel.LocalHistoryViewModel
+import com.example.myapplication.viewModel.LocalHistoryBookmark
 import compose.icons.Octicons
 import compose.icons.octicons.Globe24
 
@@ -33,7 +33,7 @@ enum class WebInfoType {
 fun WebInfo(
     favIcon: Bitmap?, title: String?, url: String?, type: WebInfoType, id: Int
 ) {
-    val historyModel = LocalHistoryViewModel.current
+    val historyModel = LocalHistoryBookmark.current
     return Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
@@ -77,12 +77,19 @@ fun WebInfo(
         if (historyModel.isEdit) {
             FilterChip(
                 selected = when (type) {
-                    WebInfoType.Bookmark -> false
+                    WebInfoType.Bookmark -> historyModel.deleteBookmark.contains(id)
                     WebInfoType.History -> historyModel.deleteHistory.contains(id)
                 },
                 onClick = {
                     when (type) {
-                        WebInfoType.Bookmark -> {}
+                        WebInfoType.Bookmark -> {
+                            if (historyModel.deleteBookmark.contains(id)) {
+                                historyModel.deleteBookmark.remove(id)
+                            } else {
+                                historyModel.deleteBookmark.add(id)
+                            }
+                        }
+
                         WebInfoType.History -> {
                             if (historyModel.deleteHistory.contains(id)) {
                                 historyModel.deleteHistory.remove(id)

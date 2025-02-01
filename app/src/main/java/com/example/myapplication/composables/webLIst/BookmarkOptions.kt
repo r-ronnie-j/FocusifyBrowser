@@ -21,7 +21,7 @@ import com.example.myapplication.viewModel.LocalHistoryBookmark
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 
 @Composable
-fun HistoryOptions() {
+fun BookmarkOptions() {
     val webviewModel = LocalWebTabViewModel.current
     val historyModel = LocalHistoryBookmark.current
 
@@ -36,30 +36,25 @@ fun HistoryOptions() {
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            Text(
-                text = "Edit",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { historyModel.isEdit = !historyModel.isEdit }
-            )
-            Spacer(modifier = Modifier.width(30.dp))
-            Text(
-                text = if (historyModel.isEdit) "Delete" else "Delete All",
+            if (historyModel.isEdit) {
+                Text(text = "Delete",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable {
+                        historyModel.deleteBookmark.forEach {
+                            webviewModel.deleteBookmarkById(it)
+                        }
+                    })
+                Spacer(modifier = Modifier.width(20.dp))
+            }
+            Text(text = "Edit",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {
-                    if (historyModel.isEdit) {
-                        historyModel.deleteHistory.forEach {
-                            webviewModel.deleteHistoryById(it)
-                        }
-                    } else {
-                        webviewModel.clearHistory()
-                    }
-                }
-            )
+                    historyModel.isEdit = !historyModel.isEdit
+                })
         }
     }
-
 }

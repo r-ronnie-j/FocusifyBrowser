@@ -11,7 +11,7 @@ class HistoryViewModel : ViewModel() {
     var search by mutableStateOf("")
     var isEdit by mutableStateOf(false)
     var deleteHistory = mutableStateListOf<Int>()
-
+    var deleteBookmark = mutableStateListOf<Int>()
 }
 
-val LocalHistoryViewModel = compositionLocalOf { HistoryViewModel() }
+val LocalHistoryBookmark = compositionLocalOf { HistoryViewModel() }
