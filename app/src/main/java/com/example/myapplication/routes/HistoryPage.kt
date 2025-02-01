@@ -1,12 +1,14 @@
 package com.example.myapplication.routes
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.composables.webLIst.HistoryOptions
 import com.example.myapplication.composables.webLIst.SearchFilter
 import com.example.myapplication.composables.webLIst.WebInfo
 import com.example.myapplication.composables.widgets.TopBar
@@ -24,6 +28,7 @@ import com.example.myapplication.navigation.LocalMainNavigationProvider
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import java.util.Calendar
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun HistoryPage() {
     val webviewModel = LocalWebTabViewModel.current
@@ -31,48 +36,59 @@ fun HistoryPage() {
     var search by remember { mutableStateOf("") }
 
     val historyItems = webviewModel.history
-
     val groupedHistory = remember(historyItems) { groupHistoryByDate(historyItems) }
 
     Column {
         TopBar(onClick = { mainNavController.popBackStack() }, text = "History")
-        SearchFilter(
-            value = search,
-            onChange = { search = it }
-        )
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
         ) {
+            item {
+                SearchFilter(
+                    value = search,
+                    onChange = { search = it }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
             groupedHistory.forEach { (groupTitle, items) ->
-                if (items.any {
-                        it.title.contains(search, ignoreCase = true) ||
-                                it.url.contains(search, ignoreCase = true)
-                    }
-                ) {
-                    Text(
-                        text = groupTitle, modifier = Modifier.padding(8.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    items.forEach { it ->
-                        if (it.title.contains(search, ignoreCase = true) ||
+                val filteredItems = items.filter {
+                    it.title.contains(search, ignoreCase = true) ||
                             it.url.contains(search, ignoreCase = true)
+                }
+
+                if (filteredItems.isNotEmpty()) {
+                    stickyHeader {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(vertical = 4.dp, horizontal = 16.dp)
                         ) {
-                            WebInfo(favIcon = it.favIcon, title = it.title, url = it.url)
+                            Text(
+                                text = groupTitle,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
+                    }
+                    items(filteredItems.size) { item ->
+                        WebInfo(
+                            favIcon = filteredItems[item].favIcon,
+                            title = filteredItems[item].title,
+                            url = filteredItems[item].url
+                        )
                     }
                 }
             }
         }
 
-        Box(modifier = Modifier.height(30.dp)) {
-            Text("Option box")
-        }
+        HistoryOptions()
     }
 }
+
 
 fun groupHistoryByDate(history: List<HistoryEntity>): Map<String, List<HistoryEntity>> {
     val today = Calendar.getInstance()

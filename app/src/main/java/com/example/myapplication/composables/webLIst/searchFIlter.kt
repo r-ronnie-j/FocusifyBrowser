@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
@@ -35,8 +36,9 @@ fun SearchFilter(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .background(Color.Transparent)
-            .border(1.dp, Color.Gray, CircleShape)
+            .border(1.dp, Color.Transparent, CircleShape)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         textStyle = LocalTextStyle.current.copy(
             color = MaterialTheme.colorScheme.onSurface,
