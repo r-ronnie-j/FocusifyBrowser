@@ -16,6 +16,7 @@ import com.example.myapplication.dataClass.TabInfo
 import com.example.myapplication.dataClass.WebCategoryStatus
 import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.WebFilterEntity
+import com.example.myapplication.database.bookmark.BookmarkEntity
 import com.example.myapplication.database.db
 import com.example.myapplication.database.history.HistoryEntity
 import com.example.myapplication.database.tabInfo.WebTabEntity
@@ -40,6 +41,7 @@ class WebTabViewModel() : ViewModel() {
     var isIncognito by mutableStateOf(false)
     var restored by mutableStateOf(false)
     var history = mutableStateListOf<HistoryEntity>()
+    var bookmarks = mutableStateListOf<BookmarkEntity>()
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
@@ -64,11 +66,13 @@ class WebTabViewModel() : ViewModel() {
                         )
                     }
                     val allHistory = db.historyDao().getAll()
+                    val allBookmark = db.bookmarkDao().getAll()
                     withContext(Dispatchers.Main) {
                         webCategoryStatusList.addAll(category)
                         spinBlockCategories.addAll(spinFilters)
                         blocksiBlockCategory.addAll(blocksiFilters)
                         history.addAll(allHistory)
+                        bookmarks.addAll(allBookmark)
                     }
                 }
             }
@@ -102,12 +106,15 @@ class WebTabViewModel() : ViewModel() {
     }
 
     private fun addHistory(h: HistoryEntity) {
-        history.add(h)
-        db?.let { db ->
-            viewModelScope.launch {
-                withContext(Dispatchers.IO) {
-                    val historyDow = db.historyDao()
-                    historyDow.add(h)
+        Log.d("history", "check restored $restored")
+        if (restored) {
+            history.add(h)
+            db?.let { db ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val historyDow = db.historyDao()
+                        historyDow.add(h)
+                    }
                 }
             }
         }
@@ -127,6 +134,32 @@ class WebTabViewModel() : ViewModel() {
         }
     }
 
+    fun addBookmark(b: BookmarkEntity) {
+        bookmarks.add(b)
+        db?.let { db ->
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val bookmarkDao = db.bookmarkDao()
+                    bookmarkDao.insert(b)
+                }
+            }
+        }
+    }
+
+    fun deleteBookmarkById(id: Int) {
+        val b = bookmarks.removeIf { it.id == id }
+        if (b) {
+            db?.let { db ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        val bookmarkDao = db.bookmarkDao()
+                        bookmarkDao.delete(id)
+                    }
+                }
+            }
+        }
+    }
+
     fun restore(context: Context) {
         db?.let { db ->
             viewModelScope.launch {
@@ -138,9 +171,9 @@ class WebTabViewModel() : ViewModel() {
                     withContext(Dispatchers.Main) {
                         notIncognitoTabs.forEach { tab ->
                             if (tab.url == null) {
-                                createWebView(context)
+                                createWebView(context, historyRestore = false)
                             } else {
-                                createWebView(context, tab.url)
+                                createWebView(context, tab.url, historyRestore = false)
                             }
                         }
                         restored = true
@@ -226,8 +259,10 @@ class WebTabViewModel() : ViewModel() {
 
     fun createWebView(
         context: Context,
-        url: String = Home_Url
+        url: String = Home_Url,
+        historyRestore: Boolean = true
     ): AayamWebView {
+        var historyR = historyRestore
         val index = webViewTabs.size
         val webView = AayamWebView(
             context = context,
@@ -255,7 +290,7 @@ class WebTabViewModel() : ViewModel() {
                     try {
                         val history = this.webViewTabs[index].copyBackForwardList()
                         val currentItem = history.currentItem
-                        if (currentItem != null) {
+                        if (currentItem != null && historyR) {
                             addHistory(
                                 HistoryEntity(
                                     url = currentItem.url,
@@ -265,6 +300,7 @@ class WebTabViewModel() : ViewModel() {
                                 )
                             )
                         }
+                        historyR = true
                     } catch (_: Exception) {
                     }
                     val newList = list.toMutableList()
