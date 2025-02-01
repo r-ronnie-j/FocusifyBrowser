@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Square
 import com.example.myapplication.composables.widgets.BouncingBox
+import com.example.myapplication.utilities.Home_Url
 import com.example.myapplication.viewModel.LocalTitleBar
 import com.example.myapplication.viewModel.LocalWebTabViewModel
 import compose.icons.Octicons
@@ -55,7 +56,16 @@ fun BottomNavBar() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = {
-                webviewModel.webViewTabs.getOrNull(activeIndex.intValue)?.goBack()
+                val wv = webviewModel.webViewTabs.getOrNull(activeIndex.intValue)
+                wv?.let {
+                    if (it.canGoBack()) {
+                        wv.goBack()
+                    } else {
+                        wv.clearHistory()
+                        wv.loadUrl(Home_Url)
+                    }
+                }
+
             }) {
                 Icon(
                     imageVector = Octicons.ChevronLeft24,
@@ -76,7 +86,7 @@ fun BottomNavBar() {
             }
             IconButton(onClick = {
                 webviewModel.webViewTabs.getOrNull(activeIndex.intValue)
-                    ?.loadUrl("file:///android_asset/home/home.html")
+                    ?.loadUrl(Home_Url)
             }) {
                 Icon(
                     imageVector = Octicons.Home24,
