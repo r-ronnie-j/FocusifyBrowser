@@ -66,75 +66,103 @@ fun MenuModal() {
     val webViewModel = LocalWebTabViewModel.current
     val context = LocalContext.current
 
-    val menuItems = listOf(
-        MenuItem("History", IconImage.ImageVectorIcon(Lucide.History), onClick = {
-            titleViewModel.showMenu = false
-            mainNavigator.navigate(MainNavigation.HistoryPage.name)
-        }, false),
-        MenuItem(
-            "Bookmarks",
-            IconImage.ImageVectorIcon(Lucide.Bookmark),
-            onClick = {
+    val menuItems =
+        listOf(
+            MenuItem("History", IconImage.ImageVectorIcon(Lucide.History), onClick = {
                 titleViewModel.showMenu = false
-                mainNavigator.navigate(MainNavigation.BookmarkPage.name)
-            }, false
-        ),
-        MenuItem(
-            "Incognito",
-            IconImage.ImageIcon(painterResource(id = R.drawable.incognito)),
-            onClick = {
-                webViewModel.isIncognito = !webViewModel.isIncognito
-            }, webViewModel.isIncognito
-        ),
-        MenuItem(
-            "Add Bookmark", IconImage.ImageVectorIcon(Lucide.BookmarkPlus), onClick = {
-                val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
-                if (webview.url == Home_Url) {
-                    Toast.makeText(context, "Home Page should not be bookmarked", Toast.LENGTH_LONG)
-                        .show()
-                } else {
-                    if (webViewModel.bookmarks.any { it.url == webview.url }) {
-                        webViewModel.deleteBookmarkByUrl(webview.url!!)
+                mainNavigator.navigate(MainNavigation.HistoryPage.name)
+            }, false),
+            MenuItem(
+                "Bookmarks",
+                IconImage.ImageVectorIcon(Lucide.Bookmark),
+                onClick = {
+                    titleViewModel.showMenu = false
+                    mainNavigator.navigate(MainNavigation.BookmarkPage.name)
+                },
+                false
+            ),
+            MenuItem(
+                "Incognito",
+                IconImage.ImageIcon(painterResource(id = R.drawable.incognito)),
+                onClick = {
+                    webViewModel.isIncognito = !webViewModel.isIncognito
+                },
+                webViewModel.isIncognito
+            ),
+            MenuItem(
+                "Add Bookmark",
+                IconImage.ImageVectorIcon(Lucide.BookmarkPlus),
+                onClick = {
+                    val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
+                    if (webview.url == Home_Url) {
+                        Toast.makeText(
+                            context,
+                            "Home Page should not be bookmarked",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
                     } else {
-                        webViewModel.addBookmark(
-                            BookmarkEntity(
-                                id = null,
-                                title = webview.title,
-                                url = webview.url,
-                                favIcon = webview.favicon,
-                                time = Date()
+                        if (webViewModel.bookmarks.any { it.url == webview.url }) {
+                            webViewModel.deleteBookmarkByUrl(webview.url!!)
+                        } else {
+                            webViewModel.addBookmark(
+                                BookmarkEntity(
+                                    id = null,
+                                    title = webview.title,
+                                    url = webview.url,
+                                    favIcon = webview.favicon,
+                                    time = Date()
+                                )
                             )
+                        }
+                    }
+                },
+                webViewModel.bookmarks.any {
+                    val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
+                    it.url == webview.url
+                }
+            ),
+            MenuItem(
+                "Downloads",
+                IconImage.ImageVectorIcon(Lucide.Download),
+                onClick = {
+                    titleViewModel.showMenu = false
+                    mainNavigator.navigate(MainNavigation.BookmarkPage.name)
+                },
+                false
+            ),
+            MenuItem(
+                "Print Page",
+                IconImage.ImageVectorIcon(Lucide.Printer),
+                onClick = {},
+                false
+            ),
+            MenuItem(
+                "Share",
+                IconImage.ImageVectorIcon(Octicons.ShareAndroid24),
+                onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(
+                            Intent.EXTRA_TEXT,
+                            webViewModel.webViewTabs[webViewModel.activeIndex.intValue].url
                         )
                     }
-                }
-            }, webViewModel.bookmarks.any {
-                val webview = webViewModel.webViewTabs[webViewModel.activeIndex.value]
-                it.url == webview.url
-            }
-        ),
-        MenuItem("Downloads", IconImage.ImageVectorIcon(Lucide.Download), onClick = {}, false),
-        MenuItem("Print Page", IconImage.ImageVectorIcon(Lucide.Printer), onClick = {}, false),
-        MenuItem("Share", IconImage.ImageVectorIcon(Octicons.ShareAndroid24), onClick = {
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                type = "text/plain"
-                putExtra(
-                    Intent.EXTRA_TEXT,
-                    webViewModel.webViewTabs[webViewModel.activeIndex.intValue].url
-                )
-            }
-            context.startActivity(Intent.createChooser(shareIntent, "Share via"))
-        }, false),
-        MenuItem(
-            "Desktop Site",
-            IconImage.ImageVectorIcon(Octicons.DeviceDesktop24),
-            onClick = {},
-            false
-        ),
-        MenuItem("Filter", IconImage.ImageVectorIcon(Lucide.Filter), onClick = {
-            titleViewModel.showMenu = false
-            mainNavigator.navigate(MainNavigation.FilterPage.name)
-        }, false)
-    )
+                    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                },
+                false
+            ),
+            MenuItem(
+                "Desktop Site",
+                IconImage.ImageVectorIcon(Octicons.DeviceDesktop24),
+                onClick = {},
+                false
+            ),
+            MenuItem("Filter", IconImage.ImageVectorIcon(Lucide.Filter), onClick = {
+                titleViewModel.showMenu = false
+                mainNavigator.navigate(MainNavigation.FilterPage.name)
+            }, false)
+        )
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(5),
@@ -151,13 +179,11 @@ fun MenuModal() {
 
 @Composable
 fun MenuItemView(item: MenuItem) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Column(horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .padding(vertical = 8.dp)
             .clickable { item.onClick() }
-            .fillMaxWidth()
-    ) {
+            .fillMaxWidth()) {
         when (item.icon) {
             is IconImage.ImageVectorIcon -> Icon(
                 imageVector = item.icon.imageVector,
@@ -169,11 +195,11 @@ fun MenuItemView(item: MenuItem) {
 
             is IconImage.ImageIcon -> {
                 Image(
-                    painter = item.icon.image, contentDescription = item.label,
+                    painter = item.icon.image,
+                    contentDescription = item.label,
                     modifier = Modifier.size(18.dp),
                     colorFilter = ColorFilter.tint(
-                        if (item.active) MaterialTheme.colorScheme.primary else
-                            MaterialTheme.colorScheme.onBackground
+                        if (item.active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                     )
                 )
             }
@@ -188,8 +214,7 @@ fun MenuItemView(item: MenuItem) {
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelSmall,
-            color = if (item.active) MaterialTheme.colorScheme.primary else
-                MaterialTheme.colorScheme.onSurface
+            color = if (item.active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
         )
     }
 }

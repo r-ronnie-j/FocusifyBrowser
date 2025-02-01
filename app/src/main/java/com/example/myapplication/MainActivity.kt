@@ -27,6 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.navigation.LocalMainNavigationProvider
 import com.example.myapplication.navigation.MainNavigation
 import com.example.myapplication.routes.BookmarkPage
+import com.example.myapplication.routes.DownloadPage
 import com.example.myapplication.routes.FilterPage
 import com.example.myapplication.routes.HistoryPage
 import com.example.myapplication.routes.HomePage
@@ -93,6 +94,9 @@ fun StartComposable() {
                     }
                     composable(route = MainNavigation.BookmarkPage.name) {
                         BookmarkPage()
+                    }
+                    composable(route = MainNavigation.DownloadPage.name) {
+                        DownloadPage()
                     }
                 }
             }

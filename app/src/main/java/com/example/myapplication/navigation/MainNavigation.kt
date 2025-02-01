@@ -8,6 +8,7 @@ enum class MainNavigation {
     FilterPage,
     HistoryPage,
     BookmarkPage,
+    DownloadPage,
 }
 
 val LocalMainNavigationProvider = compositionLocalOf<NavController> {
