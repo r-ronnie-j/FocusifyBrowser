@@ -127,7 +127,7 @@ fun MenuModal() {
                 IconImage.ImageVectorIcon(Lucide.Download),
                 onClick = {
                     titleViewModel.showMenu = false
-                    mainNavigator.navigate(MainNavigation.BookmarkPage.name)
+                    mainNavigator.navigate(MainNavigation.DownloadPage.name)
                 },
                 false
             ),

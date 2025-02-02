@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.webkit.URLUtil
@@ -53,22 +52,7 @@ class AayamWebView(
             }
         }
 
-        setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
-//            val request = DownloadManager.Request(Uri.parse(url)).apply {
-//                setMimeType(mimeType)
-//                addRequestHeader("User-Agent", userAgent)
-//                setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType))
-//                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-//                setDestinationInExternalPublicDir(
-//                    Environment.DIRECTORY_DOWNLOADS,
-//                    URLUtil.guessFileName(url, contentDisposition, mimeType)
-//                )
-//            }
-
-//            val downloadManager =
-//                context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//            val downloadId = downloadManager.enqueue(request)
-
+        setDownloadListener { url, _, contentDisposition, mimeType, _ ->
             val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
             val contentValues = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, fileName)
@@ -83,14 +67,7 @@ class AayamWebView(
                 TODO("VERSION.SDK_INT < Q")
             }
             val request = Request(url, uri.toString())
-            fetch?.let { fetch ->
-                fetch.enqueue(request, { updateRequest ->
-
-                }) { error ->
-                    Log.d("download", "There is error download the file using fetch $error")
-                }
-            }
-
+            fetch?.enqueue(request)
         }
 
         webViewClient = AayamWebClient(context, shouldBlock, onUrlChange)
