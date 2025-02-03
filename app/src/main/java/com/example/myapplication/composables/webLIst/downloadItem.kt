@@ -1,5 +1,6 @@
 package com.example.myapplication.composables.webLIst
 
+import android.webkit.MimeTypeMap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,22 +35,42 @@ import com.example.myapplication.viewModel.LocalDownloadModel
 import compose.icons.LineAwesomeIcons
 import compose.icons.Octicons
 import compose.icons.lineawesomeicons.Android
-import compose.icons.octicons.File24
+import compose.icons.lineawesomeicons.FileAlt
+import compose.icons.lineawesomeicons.FileExcel
+import compose.icons.lineawesomeicons.FileImage
+import compose.icons.lineawesomeicons.FilePdf
+import compose.icons.lineawesomeicons.FilePowerpoint
+import compose.icons.lineawesomeicons.FileWord
+import compose.icons.octicons.File16
 
-fun getImageVector(x: String): ImageVector {
-    return if (x.contains("application")) {
-        LineAwesomeIcons.Android
-    } else if (x.contains("text")) {
-        Lucide.FileText
-    } else if (x.contains("image")) {
-        Lucide.FileImage
-    } else if (x.contains("audio")) {
-        Lucide.FileAudio
-    } else if (x.contains("video")) {
-        Lucide.FileVideo
-    } else {
-        Octicons.File24
+fun getImageVector(mime: String, name: String): ImageVector {
+    if (name.endsWith(".apk")) return LineAwesomeIcons.Android
+    if (name.endsWith(".pdf")) return LineAwesomeIcons.FilePdf
+    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
+
+    return when (extension) {
+        "jpg", "jpeg" -> LineAwesomeIcons.FileImage
+        "png" -> LineAwesomeIcons.FileImage
+        "gif" -> LineAwesomeIcons.FileImage
+        "txt" -> Lucide.FileText
+        "doc", "docx" -> LineAwesomeIcons.FileWord
+        "xls", "xlsx" -> LineAwesomeIcons.FileExcel
+        "ppt", "pptx" -> LineAwesomeIcons.FilePowerpoint
+        else -> return if (mime.contains("application")) {
+            LineAwesomeIcons.FileAlt
+        } else if (mime.contains("text")) {
+            Lucide.FileText
+        } else if (mime.contains("image")) {
+            Lucide.FileImage
+        } else if (mime.contains("audio")) {
+            Lucide.FileAudio
+        } else if (mime.contains("video")) {
+            Lucide.FileVideo
+        } else {
+            Octicons.File16
+        }
     }
+
 }
 
 @Composable
@@ -61,11 +82,14 @@ fun DownloadItem(item: DownloadEntity) {
             .padding(horizontal = 12.dp, vertical = 5.dp)
             .fillMaxWidth()
     ) {
-        Icon(imageVector = getImageVector(item.name), contentDescription = "Image download")
+        Icon(
+            imageVector = if (item.name.endsWith(".apk")) LineAwesomeIcons.Android else
+                getImageVector(item.mime, item.name), contentDescription = "Image download"
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = item.mime,
+                text = item.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelMedium,
