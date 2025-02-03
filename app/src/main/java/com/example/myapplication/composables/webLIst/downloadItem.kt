@@ -134,7 +134,9 @@ fun DownloadItem(item: DownloadEntity) {
         }
         if (item.progress < 100) {
             if (item.error) {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    downloadViewModel.restart(item.id.toInt())
+                }) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = "Restart",

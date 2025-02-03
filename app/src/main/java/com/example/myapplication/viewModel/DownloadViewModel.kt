@@ -13,6 +13,7 @@ import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
+import com.tonyodev.fetch2core.Extras
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -36,10 +37,23 @@ class DownloadViewModel : ViewModel() {
     fun restart(id: Int) {
         db?.let { db ->
             val downloadDao = db.downloadDao()
-            val download = downloadDao.getFromId(id)
-            downloadDao.deleteFromId(id.toLong())
-            if (download?.url != null && download.file != null) {
-                fetch?.enqueue(Request(download.url!!, download.file!!))
+            downloads.removeIf { it.id == id.toLong() }
+            viewModelScope.launch {
+                withContext(Dispatchers.IO) {
+                    val download = downloadDao.getFromId(id)
+                    downloadDao.deleteFromId(id.toLong())
+                    if (download?.url != null && download.file != null) {
+                        val request = Request(download.url!!, download.file!!)
+                        request.extras = Extras(
+                            mapOf(
+                                Pair("name", download.name),
+                                Pair("mime", download.mime),
+                                Pair("folder", download.folder)
+                            )
+                        )
+                        fetch?.enqueue(request)
+                    }
+                }
             }
         }
     }

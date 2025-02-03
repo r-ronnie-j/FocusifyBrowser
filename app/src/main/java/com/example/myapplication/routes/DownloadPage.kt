@@ -37,13 +37,12 @@ fun DownloadPage() {
     val download = LocalDownloadModel.current
     val mainNavController = LocalMainNavigationProvider.current
 
-    val groupedDownloads = remember(download.downloads.size) {
-        groupDownloadByDate(download.downloads)
-    }
+    val groupedDownloads = groupDownloadByDate(download.downloads)
+
 
 
     Column {
-        TopBar(onClick = { mainNavController.popBackStack() }, text = "History")
+        TopBar(onClick = { mainNavController.popBackStack() }, text = "Downloads")
 
         LazyColumn(
             modifier = Modifier
