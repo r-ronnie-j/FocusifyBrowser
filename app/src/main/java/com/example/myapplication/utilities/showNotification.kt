@@ -22,9 +22,9 @@ fun showNotification(title: String, text: String, progress: Int) {
     }
 
     val iconRes = when {
-        progress in 0..99 -> android.R.drawable.stat_sys_download // Downloading Icon
-        progress == 100 -> android.R.drawable.stat_sys_download_done // Download Completed Icon
-        else -> android.R.drawable.stat_notify_error // Download Failed Icon
+        progress in 0..99 -> android.R.drawable.stat_sys_download
+        progress == 100 -> android.R.drawable.stat_sys_download_done
+        else -> android.R.drawable.stat_notify_error
     }
 
     val builder = NotificationCompat.Builder(context, channelId)
