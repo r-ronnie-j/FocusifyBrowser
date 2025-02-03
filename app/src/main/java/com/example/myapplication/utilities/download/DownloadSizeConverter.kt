@@ -27,9 +27,9 @@ object DownloadSizeConverter {
         val gb = mb / 1024.0
 
         return when {
-            gb >= 1 -> "${df.format(gb)} GB"
-            mb >= 1 -> "${df.format(mb)} MB"
-            kb >= 1 -> "${df.format(kb)} KB"
+            gb >= 1 -> "${df.format(gb)}gb"
+            mb >= 1 -> "${df.format(mb)}mb"
+            kb >= 1 -> "${df.format(kb)}kb"
             else -> "$bytes B"
         }
     }
@@ -44,9 +44,9 @@ object DownloadSizeConverter {
 
         return when {
             days >= 1 -> "${df.format(days)} days"
-            hours >= 1 -> "${df.format(hours)} hours"
-            minutes >= 1 -> "${df.format(minutes)} minutes"
-            seconds >= 1 -> "${df.format(seconds)} seconds"
+            hours >= 1 -> "${df.format(hours)} h"
+            minutes >= 1 -> "${df.format(minutes)} min"
+            seconds >= 1 -> "${df.format(seconds)} s"
             else -> "$milliseconds ms"
         }
     }
