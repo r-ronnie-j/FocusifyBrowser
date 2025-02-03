@@ -16,6 +16,7 @@ import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
 import com.example.myapplication.fetch
 import com.tonyodev.fetch2.Request
+import com.tonyodev.fetch2core.Extras
 import java.io.IOException
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -67,6 +68,16 @@ class AayamWebView(
                 TODO("VERSION.SDK_INT < Q")
             }
             val request = Request(url, uri.toString())
+            request.extras = Extras(
+                mapOf(
+                    Pair("name", fileName),
+                    Pair("mime", mimeType),
+                    Pair(
+                        "folder",
+                        "${MediaStore.Downloads.RELATIVE_PATH}/${Environment.DIRECTORY_DOWNLOADS}"
+                    )
+                )
+            )
             fetch?.enqueue(request)
         }
 

@@ -16,12 +16,16 @@ import java.util.Date
 @TypeConverters(DateConverter::class, BitmapConverter::class, PriorityConverter::class)
 data class DownloadEntity(
     @PrimaryKey val id: Long,
+    @ColumnInfo(name = "name") var name: String,
+    @ColumnInfo(name = "mime") var mime: String,
+    @ColumnInfo(name = "folder") var folder: String,
     @ColumnInfo(name = "file") var file: String?,
     @ColumnInfo(name = "fileUri") var fileUri: String?,
     @ColumnInfo(name = "url") var url: String?,
     @ColumnInfo(name = "priority") var priority: Priority,
     @ColumnInfo(name = "created") var created: Date,
     @ColumnInfo(name = "progress") var progress: Int,
+    @ColumnInfo(name = "downloaded") var downloaded: Long,
     @ColumnInfo(name = "total") var total: Long,
     @ColumnInfo(name = "eta") var eta: Long,
     @ColumnInfo(name = "error") var error: Boolean = false,
@@ -48,6 +52,10 @@ data class DownloadEntity(
                 cancelled = false,
                 bps = download.downloadedBytesPerSecond,
                 waiting = false,
+                downloaded = download.downloaded,
+                name = download.extras.getString("name", ""),
+                mime = download.extras.getString("mime", ""),
+                folder = download.extras.getString("folder", "")
             )
         }
     }

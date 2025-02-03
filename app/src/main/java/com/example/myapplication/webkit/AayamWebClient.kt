@@ -26,6 +26,24 @@ class AayamWebClient(
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .build()
 
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        val url = request?.url
+        url?.let { uri ->
+            val u = uri.toString()
+            if (u.startsWith("intent")) {
+                val intent = Intent.parseUri(u, Intent.URI_INTENT_SCHEME)
+                if (intent != null) {
+                    val packageManager = context.packageManager
+                    if (intent.resolveActivity(packageManager) != null) {
+                        context.startActivity(intent)
+                    }
+                }
+                return true
+            }
+        }
+        return super.shouldOverrideUrlLoading(view, request)
+    }
+
     override fun shouldInterceptRequest(
         view: WebView,
         request: WebResourceRequest
@@ -38,15 +56,7 @@ class AayamWebClient(
         onUrlChange(url)
         if (url != null && !url.startsWith("https://appassets.androidplatform.net/assets")) {
             val testUrl = giveNonAmpUrl(url)
-            if (url.startsWith("intent://")) {
-                val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
-                if (intent != null) {
-                    val packageManager = context.packageManager
-                    if (intent.resolveActivity(packageManager) != null) {
-                        context.startActivity(intent)
-                    }
-                }
-            } else {
+            if (!url.startsWith("intent://")) {
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
                         val blocksi = getBlocksiCategory(testUrl)

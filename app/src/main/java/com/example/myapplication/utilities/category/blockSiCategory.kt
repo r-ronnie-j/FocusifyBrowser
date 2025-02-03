@@ -1,6 +1,5 @@
 package com.example.myapplication.utilities.category
 
-import android.util.Log
 import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.utilities.client
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +13,6 @@ suspend fun getBlocksiCategory(url: String): List<BlocksiCategory> {
     val request = Request.Builder()
         .url("http://service2.block.si/getRating.json?url=$host")
         .build()
-    Log.d("here", "error is here")
     return withContext(Dispatchers.IO) {
         client.newCall(request).execute().use { response ->
             val responseString = response.body?.string()
