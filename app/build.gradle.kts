@@ -76,4 +76,6 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.fetch2)
+    implementation(libs.line.awesome)
+
 }
