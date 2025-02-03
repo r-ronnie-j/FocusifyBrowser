@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.AppDatabase
@@ -16,7 +17,16 @@ var fetch: Fetch? = null
 
 class FocusifyApplication : Application() {
 
+    companion object {
+        private var instance: FocusifyApplication? = null
+
+        fun getInstance(): Context {
+            return instance!!.applicationContext
+        }
+    }
+
     override fun onCreate() {
+        instance = this
         super.onCreate()
         db = Room
             .databaseBuilder(this.applicationContext, AppDatabase::class.java, "Focusify")

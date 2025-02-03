@@ -21,8 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.FileArchive
 import com.composables.icons.lucide.FileAudio
+import com.composables.icons.lucide.FileCode
 import com.composables.icons.lucide.FileImage
+import com.composables.icons.lucide.FileSpreadsheet
 import com.composables.icons.lucide.FileText
 import com.composables.icons.lucide.FileVideo
 import com.composables.icons.lucide.Lucide
@@ -37,10 +40,7 @@ import compose.icons.Octicons
 import compose.icons.lineawesomeicons.Android
 import compose.icons.lineawesomeicons.FileAlt
 import compose.icons.lineawesomeicons.FileExcel
-import compose.icons.lineawesomeicons.FileImage
 import compose.icons.lineawesomeicons.FilePdf
-import compose.icons.lineawesomeicons.FilePowerpoint
-import compose.icons.lineawesomeicons.FileWord
 import compose.icons.octicons.File16
 
 fun getImageVector(mime: String, name: String): ImageVector {
@@ -49,13 +49,17 @@ fun getImageVector(mime: String, name: String): ImageVector {
     val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime)
 
     return when (extension) {
-        "jpg", "jpeg" -> LineAwesomeIcons.FileImage
-        "png" -> LineAwesomeIcons.FileImage
-        "gif" -> LineAwesomeIcons.FileImage
-        "txt" -> Lucide.FileText
-        "doc", "docx" -> LineAwesomeIcons.FileWord
-        "xls", "xlsx" -> LineAwesomeIcons.FileExcel
-        "ppt", "pptx" -> LineAwesomeIcons.FilePowerpoint
+        "apk", "xapk" -> LineAwesomeIcons.Android
+        "pdf", "doc", "docx", "odt", "rtf" -> Lucide.FileText
+        "xls", "xlsx", "ods" -> Lucide.FileSpreadsheet
+        "ppt", "pptx", "odp" -> LineAwesomeIcons.FileExcel
+        "txt", "csv", "log", "json", "xml", "md", "yaml", "yml" -> Lucide.FileText
+        "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "ico" -> Lucide.FileImage
+        "mp3", "wav", "aac", "flac", "ogg", "m4a", "opus" -> Lucide.FileAudio
+        "mp4", "mkv", "avi", "mov", "flv", "wmv", "webm" -> Lucide.FileVideo
+        "zip", "rar", "7z", "tar", "gz", "xz" -> Lucide.FileArchive
+        "java", "kt", "c", "cpp", "py", "js", "ts", "html", "css", "sh", "bat", "php", "rb", "go", "rs" -> Lucide.FileCode
+
         else -> return if (mime.contains("application")) {
             LineAwesomeIcons.FileAlt
         } else if (mime.contains("text")) {

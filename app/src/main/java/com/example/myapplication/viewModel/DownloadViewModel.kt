@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.database.db
 import com.example.myapplication.database.downloads.DownloadEntity
 import com.example.myapplication.fetch
+import com.example.myapplication.utilities.showNotification
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
+import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +31,17 @@ class DownloadViewModel : ViewModel() {
 
     fun cancel(id: Int) {
         fetch?.cancel(id)
+    }
+
+    fun restart(id: Int) {
+        db?.let { db ->
+            val downloadDao = db.downloadDao()
+            val download = downloadDao.getFromId(id)
+            downloadDao.deleteFromId(id.toLong())
+            if (download?.url != null && download.file != null) {
+                fetch?.enqueue(Request(download.url!!, download.file!!))
+            }
+        }
     }
 
     init {
@@ -88,6 +101,7 @@ class DownloadViewModel : ViewModel() {
                             }
                         }
                     }
+                    showNotification(downloadEntity.name, "Download Complete", 100)
                 }
 
                 override fun onDeleted(download: Download) {
@@ -105,9 +119,7 @@ class DownloadViewModel : ViewModel() {
                 }
 
                 override fun onDownloadBlockUpdated(
-                    download: Download,
-                    downloadBlock: DownloadBlock,
-                    totalBlocks: Int
+                    download: Download, downloadBlock: DownloadBlock, totalBlocks: Int
                 ) {
                     val downloadEntity = DownloadEntity.fromDownload(download)
                     db?.let { db ->
@@ -138,6 +150,7 @@ class DownloadViewModel : ViewModel() {
                             }
                         }
                     }
+                    showNotification(downloadEntity.name, "Download Failed", -1)
                 }
 
                 override fun onPaused(download: Download) {
@@ -158,11 +171,14 @@ class DownloadViewModel : ViewModel() {
                 }
 
                 override fun onProgress(
-                    download: Download,
-                    etaInMilliSeconds: Long,
-                    downloadedBytesPerSecond: Long
+                    download: Download, etaInMilliSeconds: Long, downloadedBytesPerSecond: Long
                 ) {
                     val downloadEntity = DownloadEntity.fromDownload(download)
+                    showNotification(
+                        downloadEntity.name,
+                        "Downloading... ${downloadEntity.progress}%",
+                        downloadEntity.progress
+                    )
                     val index = downloads.indexOfFirst { it.id == download.id.toLong() }
                     if (index != -1) {
                         downloads[index] = downloadEntity
@@ -222,9 +238,7 @@ class DownloadViewModel : ViewModel() {
                 }
 
                 override fun onStarted(
-                    download: Download,
-                    downloadBlocks: List<DownloadBlock>,
-                    totalBlocks: Int
+                    download: Download, downloadBlocks: List<DownloadBlock>, totalBlocks: Int
                 ) {
                     val downloadEntity = DownloadEntity.fromDownload(download)
                     db?.let { db ->

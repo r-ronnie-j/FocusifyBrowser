@@ -9,6 +9,7 @@ import android.webkit.WebViewClient
 import androidx.webkit.WebViewAssetLoader
 import com.example.myapplication.dataClass.BlocksiCategory
 import com.example.myapplication.dataClass.SpinWebCategory
+import com.example.myapplication.utilities.Block_Url
 import com.example.myapplication.utilities.category.getBlocksiCategory
 import com.example.myapplication.utilities.category.getSpinCategory
 import com.example.myapplication.utilities.giveNonAmpUrl
@@ -64,13 +65,11 @@ class AayamWebClient(
                         view?.onPause()
                         if (shouldBlock(blocksi, spin)) {
                             view?.stopLoading()
-                            val replaceUrl =
-                                "https://appassets.androidplatform.net/assets/block/index.html"
                             view?.evaluateJavascript(
                                 """
                             (function() { 
                                 console.log('Replacing URL...');
-                                window.location.replace('$replaceUrl'); 
+                                window.location.replace('$Block_Url'); 
                                 return "done"
                             })();
                             """
