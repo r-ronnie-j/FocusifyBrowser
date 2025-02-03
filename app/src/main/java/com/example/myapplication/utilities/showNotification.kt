@@ -7,11 +7,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.myapplication.FocusifyApplication
 
-fun showNotification(
-    title: String,
-    text: String,
-    progress: Int
-) {
+fun showNotification(title: String, text: String, progress: Int) {
     val context = FocusifyApplication.getInstance()
     val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -25,17 +21,23 @@ fun showNotification(
         notificationManager.createNotificationChannel(channel)
     }
 
+    val iconRes = when {
+        progress in 0..99 -> android.R.drawable.stat_sys_download // Downloading Icon
+        progress == 100 -> android.R.drawable.stat_sys_download_done // Download Completed Icon
+        else -> android.R.drawable.stat_notify_error // Download Failed Icon
+    }
+
     val builder = NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(android.R.drawable.stat_sys_download)
+        .setSmallIcon(iconRes)
         .setContentTitle(title)
         .setContentText(text)
         .setPriority(NotificationCompat.PRIORITY_LOW)
         .setOngoing(progress in 0..99)
 
     if (progress in 0..99) {
-        builder.setProgress(100, progress, false)
+        builder.setProgress(100, progress, false) // Show progress bar
     } else {
-        builder.setProgress(0, 0, false)
+        builder.setProgress(0, 0, false) // Remove progress bar
     }
 
     notificationManager.notify(title.hashCode(), builder.build())
