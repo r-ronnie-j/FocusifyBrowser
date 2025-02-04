@@ -87,7 +87,7 @@ fun DownloadPage() {
 
 }
 
-fun groupDownloadByDate(downloads: List<DownloadEntity>): Map<String, List<DownloadEntity>> {
+private fun groupDownloadByDate(downloads: List<DownloadEntity>): Map<String, List<DownloadEntity>> {
     val today = Calendar.getInstance()
     val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
     val thisWeek = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -7) }

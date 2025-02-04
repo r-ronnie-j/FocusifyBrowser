@@ -1,7 +1,9 @@
 package com.example.myapplication.viewModel
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import android.webkit.WebView
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,6 +44,7 @@ class WebTabViewModel() : ViewModel() {
     var restored by mutableStateOf(false)
     var history = mutableStateListOf<HistoryEntity>()
     var bookmarks = mutableStateListOf<BookmarkEntity>()
+    var showModel by mutableStateOf(false)
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
@@ -284,6 +287,7 @@ class WebTabViewModel() : ViewModel() {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     fun createWebView(
         context: Context,
         url: String = Home_Url,
@@ -391,9 +395,19 @@ class WebTabViewModel() : ViewModel() {
                         spin.any { spinBlockCategories.contains(it) }
             },
         )
-
         webView.loadUrl(url)
         webViewTabs.add(webView)
+        webView.isLongClickable = true
+        webView.setOnLongClickListener { x ->
+            val hitTestResult = (x as WebView).hitTestResult
+            val clickedUrl = hitTestResult.extra
+
+            if (!clickedUrl.isNullOrEmpty()) {
+                showModel = true
+            }
+            true
+        }
+
         return webView
     }
 }

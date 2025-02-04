@@ -21,16 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Code
 import com.composables.icons.lucide.FileArchive
-import com.composables.icons.lucide.FileAudio
-import com.composables.icons.lucide.FileCode
-import com.composables.icons.lucide.FileImage
 import com.composables.icons.lucide.FileSpreadsheet
 import com.composables.icons.lucide.FileText
-import com.composables.icons.lucide.FileVideo
+import com.composables.icons.lucide.Image
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
 import com.composables.icons.lucide.Pause
 import com.composables.icons.lucide.Play
+import com.composables.icons.lucide.Text
+import com.composables.icons.lucide.Video
 import com.example.myapplication.composables.widgets.ProgressIndicator
 import com.example.myapplication.database.downloads.DownloadEntity
 import com.example.myapplication.utilities.download.DownloadSizeConverter
@@ -41,7 +42,8 @@ import compose.icons.lineawesomeicons.Android
 import compose.icons.lineawesomeicons.FileAlt
 import compose.icons.lineawesomeicons.FileExcel
 import compose.icons.lineawesomeicons.FilePdf
-import compose.icons.octicons.File16
+import compose.icons.lineawesomeicons.FileWord
+import compose.icons.octicons.File24
 
 fun getImageVector(mime: String, name: String): ImageVector {
     if (name.endsWith(".apk")) return LineAwesomeIcons.Android
@@ -50,28 +52,28 @@ fun getImageVector(mime: String, name: String): ImageVector {
 
     return when (extension) {
         "apk", "xapk" -> LineAwesomeIcons.Android
-        "pdf", "doc", "docx", "odt", "rtf" -> Lucide.FileText
+        "doc", "docx", "odt", "rtf" -> LineAwesomeIcons.FileWord
         "xls", "xlsx", "ods" -> Lucide.FileSpreadsheet
         "ppt", "pptx", "odp" -> LineAwesomeIcons.FileExcel
         "txt", "csv", "log", "json", "xml", "md", "yaml", "yml" -> Lucide.FileText
-        "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "ico" -> Lucide.FileImage
-        "mp3", "wav", "aac", "flac", "ogg", "m4a", "opus" -> Lucide.FileAudio
-        "mp4", "mkv", "avi", "mov", "flv", "wmv", "webm" -> Lucide.FileVideo
+        "jpg", "jpeg", "png", "gif", "bmp", "webp", "tiff", "svg", "ico" -> Lucide.Image
+        "mp3", "wav", "aac", "flac", "ogg", "m4a", "opus" -> Lucide.Music
+        "mp4", "mkv", "avi", "mov", "flv", "wmv", "webm" -> Lucide.Video
         "zip", "rar", "7z", "tar", "gz", "xz" -> Lucide.FileArchive
-        "java", "kt", "c", "cpp", "py", "js", "ts", "html", "css", "sh", "bat", "php", "rb", "go", "rs" -> Lucide.FileCode
+        "java", "kt", "c", "cpp", "py", "js", "ts", "html", "css", "sh", "bat", "php", "rb", "go", "rs" -> Lucide.Code
 
         else -> return if (mime.contains("application")) {
             LineAwesomeIcons.FileAlt
         } else if (mime.contains("text")) {
-            Lucide.FileText
+            Lucide.Text
         } else if (mime.contains("image")) {
-            Lucide.FileImage
+            Lucide.Image
         } else if (mime.contains("audio")) {
-            Lucide.FileAudio
+            Lucide.Music
         } else if (mime.contains("video")) {
-            Lucide.FileVideo
+            Lucide.Video
         } else {
-            Octicons.File16
+            Octicons.File24
         }
     }
 
@@ -83,7 +85,7 @@ fun DownloadItem(item: DownloadEntity) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 5.dp)
+            .padding(horizontal = 12.dp, vertical = 10.dp)
             .fillMaxWidth()
     ) {
         Icon(
@@ -96,7 +98,7 @@ fun DownloadItem(item: DownloadEntity) {
                 text = item.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelLarge,
             )
             Spacer(modifier = Modifier.height(4.dp))
             if (item.progress != 100) {
