@@ -142,9 +142,13 @@ class WebTabViewModel() : ViewModel() {
 
     fun clearHistory() {
         webViewTabs.forEach { it.clearHistory() }
-        db?.let { db ->
-            val historyDao = db.historyDao()
-            historyDao.clearAll()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                db?.let { db ->
+                    val historyDao = db.historyDao()
+                    historyDao.clearAll()
+                }
+            }
         }
     }
 
