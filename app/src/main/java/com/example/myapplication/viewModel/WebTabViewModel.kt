@@ -35,6 +35,11 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.Date
 
+data class ClickedUrl(
+    val imageUrl: String?,
+    val linkUrl: String?,
+    val type: Int
+)
 
 class WebTabViewModel() : ViewModel() {
     val webViewTabs = mutableStateListOf<AayamWebView>()
@@ -45,6 +50,13 @@ class WebTabViewModel() : ViewModel() {
     var history = mutableStateListOf<HistoryEntity>()
     var bookmarks = mutableStateListOf<BookmarkEntity>()
     var showModel by mutableStateOf(false)
+    var clickedUrl by mutableStateOf<ClickedUrl>(
+        ClickedUrl(
+            imageUrl = null,
+            linkUrl = null,
+            type = WebView.HitTestResult.UNKNOWN_TYPE
+        )
+    )
 
     private val spinBlockCategories = mutableStateListOf<SpinWebCategory>()
     private val blocksiBlockCategory = mutableStateListOf<BlocksiCategory>()
@@ -295,10 +307,12 @@ class WebTabViewModel() : ViewModel() {
     fun createWebView(
         context: Context,
         url: String = Home_Url,
+        incognitoSetting: Boolean? = null,
         historyRestore: Boolean = true
     ): AayamWebView {
         var historyR = historyRestore
         val index = webViewTabs.size
+        val incognito = incognitoSetting ?: isIncognito
         val webView = AayamWebView(
             context = context,
             onTitleReceive = { title ->
@@ -308,7 +322,7 @@ class WebTabViewModel() : ViewModel() {
                         newList.add(
                             TabInfo(
                                 title = title ?: "No title found",
-                                incognito = isIncognito,
+                                incognito = incognito,
                                 favIcon = null,
                                 progress = 0,
                                 url = null
@@ -344,7 +358,7 @@ class WebTabViewModel() : ViewModel() {
                         newList.add(
                             TabInfo(
                                 title = "No title found",
-                                incognito = isIncognito,
+                                incognito = incognito,
                                 favIcon = icon,
                                 progress = 0,
                                 url = null
@@ -363,7 +377,7 @@ class WebTabViewModel() : ViewModel() {
                         newList.add(
                             TabInfo(
                                 title = "Loading...",
-                                incognito = isIncognito,
+                                incognito = incognito,
                                 favIcon = null,
                                 progress = progress,
                                 url = null
@@ -382,7 +396,7 @@ class WebTabViewModel() : ViewModel() {
                         newList.add(
                             TabInfo(
                                 title = "Loading...",
-                                incognito = isIncognito,
+                                incognito = incognito,
                                 favIcon = null,
                                 progress = 0,
                                 url = loadedUrl
@@ -398,20 +412,13 @@ class WebTabViewModel() : ViewModel() {
                 return@AayamWebView blocksi.any { blocksiBlockCategory.contains(it) } ||
                         spin.any { spinBlockCategories.contains(it) }
             },
+            onLongPress = {
+                clickedUrl = it
+                showModel = true
+            }
         )
         webView.loadUrl(url)
         webViewTabs.add(webView)
-        webView.isLongClickable = true
-        webView.setOnLongClickListener { x ->
-            val hitTestResult = (x as WebView).hitTestResult
-            val clickedUrl = hitTestResult.extra
-
-            if (!clickedUrl.isNullOrEmpty()) {
-                showModel = true
-            }
-            true
-        }
-
         return webView
     }
 }
