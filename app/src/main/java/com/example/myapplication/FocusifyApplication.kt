@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
+import com.example.myapplication.adblocker.PopulateFilterListsCoroutine
 import com.example.myapplication.dataClass.categoryList
 import com.example.myapplication.database.AppDatabase
 import com.example.myapplication.database.WebFilterEntity
@@ -47,5 +48,6 @@ class FocusifyApplication : Application() {
             FetchConfiguration.Builder(this.applicationContext).setDownloadConcurrentLimit(3)
                 .build()
         fetch = Fetch.Impl.getInstance(fetchConfiguration)
+        PopulateFilterListsCoroutine.populateFilterLists(this.applicationContext)
     }
 }
