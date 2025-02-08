@@ -1,10 +1,13 @@
 package com.example.myapplication
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -44,6 +47,17 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val requestPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                println("Download permission granted")
+            } else {
+                println("Download permission denied")
+            }
+        }
+
         setContent {
             val intent = rememberUpdatedState(this.intent) // Ensure latest intent is used
             val webviewModel = LocalWebTabViewModel.current
@@ -54,6 +68,9 @@ class MainActivity : ComponentActivity() {
                     webviewModel.createWebView(context, uri.toString())
                     webviewModel.activeIndex.intValue = webviewModel.webViewTabs.size - 1
                 }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
             }
 
             MyApplicationTheme {
@@ -62,6 +79,13 @@ class MainActivity : ComponentActivity() {
         }
 
     }
+
+    private val pushNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        Log.d("permission", "permission checking")
+    }
+
 }
 
 @Composable
