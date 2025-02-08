@@ -40,36 +40,11 @@ class AayamWebClient(
         .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(context))
         .build()
 
-//    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-//        val url = request?.url
-//        url?.let { uri ->
-//            val u = uri.toString()
-//            if (u.startsWith("intent")) {
-//                val intent = Intent.parseUri(u, Intent.URI_INTENT_SCHEME)
-//                if (intent != null) {
-//                    val packageManager = context.packageManager
-//                    if (intent.resolveActivity(packageManager) != null) {
-//                        context.startActivity(intent)
-//                    }
-//                }
-//                return true
-//            }
-//        }
-//        return super.shouldOverrideUrlLoading(view, request)
-//    }
-//
-//    override fun shouldInterceptRequest(
-//        view: WebView,
-//        request: WebResourceRequest
-//    ): WebResourceResponse? {
-//        return assetLoader.shouldInterceptRequest(request.url)
-//    }
-
-
     override fun shouldOverrideUrlLoading(
         view: WebView,
         webResourceRequest: WebResourceRequest
     ): Boolean {
+
         var urlString = webResourceRequest.url.toString()
         urlString = sanitizeUrl(urlString)
 
@@ -81,69 +56,76 @@ class AayamWebClient(
         var requestBaseDomain = webResourceRequest.url.host
 
         val requestUrlString = webResourceRequest.url.toString()
-
-        if (currentBaseDomain.isNotEmpty() && (requestBaseDomain != null)) {
-            while (currentBaseDomain.indexOf(
-                    ".",
-                    currentBaseDomain.indexOf(".") + 1
-                ) > 0
-            ) {
-                currentBaseDomain = currentBaseDomain.substring(currentBaseDomain.indexOf(".") + 1)
-            }
-
-            while (requestBaseDomain!!.indexOf(
-                    ".",
-                    requestBaseDomain.indexOf(".") + 1
-                ) > 0
-            ) {
-                requestBaseDomain = requestBaseDomain.substring(requestBaseDomain.indexOf(".") + 1)
-            }
-
-            isThirdPartyRequest = currentBaseDomain != requestBaseDomain
-        }
-        val shouldBlock = shouldBlockAd(
-            currentDomain = currentDomain,
-            requestUrlString = requestUrlString,
-            isThirdPartyRequest = isThirdPartyRequest
-        )
         Log.d(
             "adblock",
-            "$currentDomain $requestUrlString $isThirdPartyRequest $shouldBlock is block"
+            "should override url loading ${webResourceRequest.url} currentDomain : $currentDomain"
         )
-        if (shouldBlock) {
-            return true
-        }
+        if (currentDomain != null) {
+            if (!currentBaseDomain.isNullOrEmpty() && (requestBaseDomain != null)) {
+                while (currentBaseDomain.indexOf(
+                        ".",
+                        currentBaseDomain.indexOf(".") + 1
+                    ) > 0
+                ) {
+                    currentBaseDomain =
+                        currentBaseDomain.substring(currentBaseDomain.indexOf(".") + 1)
+                }
 
-        return when {
-            urlString.startsWith("http") -> {
-                false
+                while (requestBaseDomain!!.indexOf(
+                        ".",
+                        requestBaseDomain.indexOf(".") + 1
+                    ) > 0
+                ) {
+                    requestBaseDomain =
+                        requestBaseDomain.substring(requestBaseDomain.indexOf(".") + 1)
+                }
+
+                isThirdPartyRequest = currentBaseDomain != requestBaseDomain
+            }
+            val shouldBlock = shouldBlockAd(
+                currentDomain = currentDomain,
+                requestUrlString = requestUrlString,
+                isThirdPartyRequest = isThirdPartyRequest
+            )
+            if (shouldBlock) {
+                return true
             }
 
-            urlString.startsWith("mailto:") -> {
-                val intent = Intent(Intent.ACTION_SENDTO).apply {
-                    data = Uri.parse(urlString)
-                }
-                try {
-                    context.startActivity(intent, null)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "Mail client not found", Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
-
-            urlString.startsWith("tel:") -> {
-                val intent = Intent(Intent.ACTION_DIAL).apply {
-                    data = Uri.parse(urlString)
+            return when {
+                urlString.startsWith("http") -> {
+                    false
                 }
 
-                try {
-                    context.startActivity(intent, null)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "Dial client not found", Toast.LENGTH_SHORT).show()
+                urlString.startsWith("mailto:") -> {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse(urlString)
+                    }
+                    try {
+                        context.startActivity(intent, null)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, "Mail client not found", Toast.LENGTH_SHORT).show()
+                    }
+                    true
                 }
-                true
+
+                urlString.startsWith("tel:") -> {
+                    val intent = Intent(Intent.ACTION_DIAL).apply {
+                        data = Uri.parse(urlString)
+                    }
+
+                    try {
+                        context.startActivity(intent, null)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, "Dial client not found", Toast.LENGTH_SHORT).show()
+                    }
+                    true
+                }
+
+                else -> true
             }
-            else -> true
+        } else {
+            Log.d("adblock", "current domain is null")
+            return false
         }
     }
 
