@@ -10,7 +10,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.aayam.focusify"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

@@ -9,17 +9,11 @@ fun shouldBlockAd(
     isThirdPartyRequest: Boolean
 ): Boolean {
     try {
-
-
         val ultraListResults = checkFilterList.checkFilterList(
             currentDomain,
             requestUrlString,
-            isThirdPartyRequest,
+            false,
             PopulateFilterListsCoroutine.combinedFilterLists[4]
-        )
-        Log.d(
-            "adblock",
-            "ultralist ${ultraListResults} ${PopulateFilterListsCoroutine.combinedFilterLists[4].size}"
         )
         if (ultraListResults[0] == REQUEST_BLOCKED) {
             Log.d("adblock", "ultralist blocked ")
@@ -29,7 +23,7 @@ fun shouldBlockAd(
         val ultraPrivacyResults = checkFilterList.checkFilterList(
             currentDomain,
             requestUrlString,
-            isThirdPartyRequest,
+            false,
             PopulateFilterListsCoroutine.combinedFilterLists[5]
         )
 
@@ -44,7 +38,7 @@ fun shouldBlockAd(
         val easyListResults = checkFilterList.checkFilterList(
             currentDomain,
             requestUrlString,
-            isThirdPartyRequest,
+            false,
             PopulateFilterListsCoroutine.combinedFilterLists[0]
         )
 
