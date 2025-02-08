@@ -10,7 +10,6 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.webkit.WebViewAssetLoader
 import com.example.myapplication.adblocker.CheckFilterList
 import com.example.myapplication.adblocker.sanitizeUrl
@@ -144,19 +143,7 @@ class AayamWebClient(
                 }
                 true
             }
-
-            else -> {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(urlString)
-                    addCategory(Intent.CATEGORY_BROWSABLE)
-                }
-                try {
-                    ContextCompat.startActivity(context, intent, null)
-                } catch (e: ActivityNotFoundException) {
-                    Toast.makeText(context, "Dial client not found", Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
+            else -> true
         }
     }
 
@@ -213,6 +200,12 @@ class AayamWebClient(
         }
 
         return null
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        Log.d("adblock", "not called properly for $url")
+        return super.shouldOverrideUrlLoading(view, url)
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {

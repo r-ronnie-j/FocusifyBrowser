@@ -1,6 +1,6 @@
 [Adblock Plus 2.0]
 ! Version: 3
-! Title: UltraPrivacy
+! Title: UltraList
 ! Last modified: 27 Apr 2023 19:27 UTC
 ! Expires: 90 days (update frequency)
 ! Homepage: https://www.stoutner.com/privacy-browser-android/filter-lists/ultraprivacy/
